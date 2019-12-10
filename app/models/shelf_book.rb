@@ -3,5 +3,4 @@ class ShelfBook < ApplicationRecord
   belongs_to :shelf
   has_many :reviews
   has_many :progresses
-  #What plural of progress does Rails account?
-end
+ end
