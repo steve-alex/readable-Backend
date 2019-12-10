@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_10_092542) do
+ActiveRecord::Schema.define(version: 2019_12_10_183233) do
 
   create_table "books", force: :cascade do |t|
     t.string "name"
@@ -19,10 +19,21 @@ ActiveRecord::Schema.define(version: 2019_12_10_092542) do
   end
 
   create_table "comments", force: :cascade do |t|
+    t.string "content"
     t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_comments_on_user_id"
+  end
+
+  create_table "follows", force: :cascade do |t|
+    t.integer "follower_id"
+    t.integer "followed_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["followed_id"], name: "index_follows_on_followed_id"
+    t.index ["follower_id", "followed_id"], name: "index_follows_on_follower_id_and_followed_id", unique: true
+    t.index ["follower_id"], name: "index_follows_on_follower_id"
   end
 
   create_table "likes", force: :cascade do |t|
@@ -33,6 +44,7 @@ ActiveRecord::Schema.define(version: 2019_12_10_092542) do
   end
 
   create_table "progesses", force: :cascade do |t|
+    t.integer "status"
     t.integer "user_id", null: false
     t.integer "shelfBook_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -42,6 +54,7 @@ ActiveRecord::Schema.define(version: 2019_12_10_092542) do
   end
 
   create_table "reviews", force: :cascade do |t|
+    t.string "content"
     t.integer "user_id", null: false
     t.integer "shelfBook_id", null: false
     t.datetime "created_at", precision: 6, null: false
@@ -68,8 +81,14 @@ ActiveRecord::Schema.define(version: 2019_12_10_092542) do
   end
 
   create_table "users", force: :cascade do |t|
+    t.string "fullname"
+    t.boolean "fullnameviewable"
     t.string "username"
     t.string "password_digest"
+    t.string "gender"
+    t.string "city"
+    t.boolean "cityviewable"
+    t.string "about"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
