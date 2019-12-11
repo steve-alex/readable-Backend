@@ -17,4 +17,41 @@ class User < ApplicationRecord
   
   has_many :follows_as_followed, foreign_key: "followed_id", class_name: :Follow, dependent: :destroy
   has_many :followers, through: :follows_as_followed, class_name: :User
+
+  validates :fullname, :username, :email, :password, {
+    presence: true
+  }
+
+  validates :about, {
+    length: { maximum: 380 ,
+      message: "About section cannot be longer than 380 characters"
+    }
+  }
+
+  # validates :fullname {
+  #       format: {
+  #     USERNAMEREX
+  #   }
+  # }
+
+  validates :username, {
+    uniqueness: true
+    # format: {
+    #   USERNAMEREX
+    # }
+  }
+
+  validates :email, {
+    uniqueness: true
+    # format: {
+    #   EMAILREGEX
+    # }
+  }
+  
+  # validates :password {
+  #   format: {
+  #     PASSWORDREGEX
+  #   }
+  # }
+
 end

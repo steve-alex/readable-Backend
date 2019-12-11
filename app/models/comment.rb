@@ -3,4 +3,10 @@ class Comment < ApplicationRecord
   belongs_to :commentable, polymorphic => true
   has_many :comments, :as => :commentable 
   has_many :likes, :as => :likeable
+
+  validates :content, {
+    length: { maximum: 900,
+      message: "Cotent cannot be longer than 900 characters"
+    }
+  }
 end
