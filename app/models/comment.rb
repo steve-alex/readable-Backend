@@ -6,7 +6,7 @@ class Comment < ApplicationRecord
 
   validates :content, {
     length: { maximum: 900,
-      message: "Cotent cannot be longer than 900 characters"
+      message: "Content cannot be longer than 900 characters"
     }
   }
 end
