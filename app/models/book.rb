@@ -1,4 +1,4 @@
 class Book < ApplicationRecord
-  has_many :shelfBooks
-  has_many :shelves, through: :shelfBooks
+  has_many :shelf_books
+  has_many :shelves, through: :shelf_books
 end
