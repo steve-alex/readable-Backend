@@ -11,14 +11,14 @@ class Api::ShelvesController < ApplicationController
   end
   
   def show
-    render json: @user
+    render json: @shelf
   end
 
   def update
     if @shelf.update(shelf_params)
       render json: { message: "Shelf has been updated", status: :ok }
     else
-      render json: { message: @shelf.errors.messages, status: :not_accepted }
+      render json: { shelf: @shelf, message: @shelf.errors.messages, status: :not_accepted }
     end
   end
 

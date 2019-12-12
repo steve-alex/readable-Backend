@@ -4,21 +4,21 @@ class Api::BooksController < ApplicationController
   def create
     book = Book.create(book_params)
     if book.valid?
-      render json: { book: book, status: :ok }
+      render json: { book: BookSerializer.new(book), status: :ok }
     else
       render json: { errors: book.errors.full_messages, status: :not_accepted }
     end
   end
 
   def show
-    render json: @book
+    render json: { book: BookSerializer.new(@book) }
   end
 
   def update
     if @book.update(book_params)
-      render json: { message: "Updated book", status: :ok}
+      render json: { book: BookSerializer.new(@book), message: "Updated book", status: :ok }
     else
-      render json: { message: @book.errors.full_messages , status: :not_accepted}
+      render json: { message: @book.errors.full_messages, status: :not_accepted}
     end
   end
 

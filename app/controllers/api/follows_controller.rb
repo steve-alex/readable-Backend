@@ -1,10 +1,10 @@
-class Api::FollowController < ApplicationController
+class Api::FollowsController < ApplicationController
   before_action :set_follow, only: [:show, :update, :destroy]
 
   def create
     follow = Follow.create(follow_params)
     if follow.valid?
-      render json: { follow, status: :ok }
+      render json: { follow: follow, status: :ok }
     else
       render json: { errors: follow.errors.full_messages, status: :not_accepted }
     end

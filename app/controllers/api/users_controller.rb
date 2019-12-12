@@ -1,5 +1,5 @@
 class Api::UsersController < ApplicationController
-  before_action :set_user, only: [:show, :update, :destroy]
+  before_action :set_user, only: [:show, :update, :destroy, :timeline]
 
   def create
     user = User.create(user_params)
@@ -11,12 +11,12 @@ class Api::UsersController < ApplicationController
   end
 
   def show
-    render json: @user
+    render json: { user: UserSerializer.new(@user) }
   end
 
   def update
     if @user.update(user_params)
-      render json: { message: "Updated user details", status: :ok}
+      render json: { user: UserSerializer.new(@user), message: "Updated user details", status: :ok}
     else
       render json: { message: @user.errors.full_messages, status: :not_accepted}
     end
@@ -24,7 +24,11 @@ class Api::UsersController < ApplicationController
 
   def destroy
     @user.destroy
-    render json: { message: "Deleted User", status: :ok}
+    render json: { message: "Deleted user", status: :ok}
+  end
+
+  def timeline
+    render json: { timeline: TimelineSerializer.new(@user) }
   end
 
   private
