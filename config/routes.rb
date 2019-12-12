@@ -10,6 +10,8 @@ Rails.application.routes.draw do
     resources :shelf_books, only: [:create, :show, :update, :destroy]
     resources :shelves, only: [:create, :show, :update, :destroy]
     resources :users, only: [:create, :show, :update, :destroy]
+
+    get 'users/:id/timeline', to: 'users#timeline'
   end
 
 end
