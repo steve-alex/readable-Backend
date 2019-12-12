@@ -1,3 +1,3 @@
 class ShelfBookSerializer < ActiveModel::Serializer
-  attributes :id
+  attributes :currently_reading, :book_id, :shelf_id
 end
