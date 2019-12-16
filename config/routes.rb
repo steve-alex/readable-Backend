@@ -5,6 +5,8 @@ Rails.application.routes.draw do
     get 'users/:id/timeline', to: 'users#timeline'
     post 'users/login', to: 'users#login'
 
+    post 'books/search', to: 'books#search'
+
     resources :books, only: [:create, :show, :update, :destroy]
     resources :comments, only: [:create, :show, :destroy]
     resources :follows, only: [:create, :show, :destroy]
