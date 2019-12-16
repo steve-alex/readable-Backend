@@ -1,5 +1,7 @@
 class Api::BooksController < ApplicationController
   before_action :set_book, only: [:show, :update, :destroy]
+  require "#{Rails.root}/app/apis/client.rb"
+
 
   def create
     book = Book.create(book_params)
@@ -25,6 +27,11 @@ class Api::BooksController < ApplicationController
   def destroy
     @book.destroy
     render json: { message: "Deleted book", status: :ok}
+  end
+
+  def search
+    search_results = Client.new(params[:query]).get_search_data
+    render json: { results: search_results, status: :ok}
   end
 
   private
