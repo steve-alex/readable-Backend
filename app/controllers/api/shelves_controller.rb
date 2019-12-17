@@ -27,10 +27,29 @@ class Api::ShelvesController < ApplicationController
     render json: { message: "Deleted shelf", status: :ok}
   end
 
+  def add_book
+    shelf = Shelf.find(params[:shelfId])
+    book = Book.find_by(google_id: params[:book][:google_id])
+    if !book
+      book = Book.create(book_params)
+    end
+    
+    if shelf.books.include?(book)
+      render json: { errors: "#{book.title} is already in #{shelf.name}"}
+    else
+      shelf.books << book
+      render json: { message: "#{book.title} has been added to #{shelf.name}"}
+    end
+  end
+
   private
 
   def shelf_params
     params.require(:shelf).permit(:name, :user_id)
+  end
+
+  def book_params
+    params.require(:book).permit(:google_id, :title, :subtitle, :authors, :categories, :description, :language, :image_url, :published_date, :page_count, :google_average_rating, :rating_count)
   end
 
   def set_shelf

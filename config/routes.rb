@@ -6,6 +6,9 @@ Rails.application.routes.draw do
     post 'users/login', to: 'users#login'
 
     post 'books/search', to: 'books#search'
+    post 'books/find_or_create', to: 'books#find_or_create'
+
+    post 'shelves/add_book', to: 'shelves#add_book'
 
     resources :books, only: [:create, :show, :update, :destroy]
     resources :comments, only: [:create, :show, :destroy]
@@ -16,7 +19,5 @@ Rails.application.routes.draw do
     resources :shelf_books, only: [:create, :show, :update, :destroy]
     resources :shelves, only: [:create, :show, :update, :destroy]
     resources :users, only: [:create, :show, :update, :destroy]
-
-
   end
 end
