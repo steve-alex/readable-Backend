@@ -2,7 +2,6 @@ class Shelf < ApplicationRecord
   belongs_to :user
   has_many :shelf_books
   has_many :books, through: :shelf_books
-  has_many :reviews
   has_many :progresses
 
   validates :name, {
@@ -14,4 +13,5 @@ class Shelf < ApplicationRecord
     uniqueness: { scope: :user,
       message: "Shelf names must be unique" }
   }
+
 end

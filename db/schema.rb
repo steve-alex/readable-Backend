@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 2019_12_11_184649) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "books", force: :cascade do |t|
     t.string "google_id"
     t.string "title"
@@ -32,9 +35,9 @@ ActiveRecord::Schema.define(version: 2019_12_11_184649) do
 
   create_table "comments", force: :cascade do |t|
     t.string "content"
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.string "commentable_type"
-    t.integer "commentable_id"
+    t.bigint "commentable_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["commentable_type", "commentable_id"], name: "index_comments_on_commentable_type_and_commentable_id"
@@ -52,9 +55,9 @@ ActiveRecord::Schema.define(version: 2019_12_11_184649) do
   end
 
   create_table "likes", force: :cascade do |t|
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.string "likeable_type"
-    t.integer "likeable_id"
+    t.bigint "likeable_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["likeable_type", "likeable_id"], name: "index_likes_on_likeable_type_and_likeable_id"
@@ -62,9 +65,10 @@ ActiveRecord::Schema.define(version: 2019_12_11_184649) do
   end
 
   create_table "progresses", force: :cascade do |t|
-    t.integer "status"
-    t.integer "user_id", null: false
-    t.integer "shelf_book_id", null: false
+    t.integer "current_page"
+    t.integer "total_pages"
+    t.bigint "user_id", null: false
+    t.bigint "shelf_book_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["shelf_book_id"], name: "index_progresses_on_shelf_book_id"
@@ -73,19 +77,20 @@ ActiveRecord::Schema.define(version: 2019_12_11_184649) do
 
   create_table "reviews", force: :cascade do |t|
     t.string "content"
+    t.integer "rating"
     t.integer "sentiment"
-    t.integer "user_id", null: false
-    t.integer "shelf_book_id", null: false
+    t.bigint "user_id", null: false
+    t.bigint "book_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["shelf_book_id"], name: "index_reviews_on_shelf_book_id"
+    t.index ["book_id"], name: "index_reviews_on_book_id"
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
   create_table "shelf_books", force: :cascade do |t|
     t.boolean "currently_reading", default: false
-    t.integer "book_id", null: false
-    t.integer "shelf_id", null: false
+    t.bigint "book_id", null: false
+    t.bigint "shelf_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["book_id"], name: "index_shelf_books_on_book_id"
@@ -94,7 +99,7 @@ ActiveRecord::Schema.define(version: 2019_12_11_184649) do
 
   create_table "shelves", force: :cascade do |t|
     t.string "name"
-    t.integer "user_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_shelves_on_user_id"
@@ -118,7 +123,7 @@ ActiveRecord::Schema.define(version: 2019_12_11_184649) do
   add_foreign_key "likes", "users"
   add_foreign_key "progresses", "shelf_books"
   add_foreign_key "progresses", "users"
-  add_foreign_key "reviews", "shelf_books"
+  add_foreign_key "reviews", "books"
   add_foreign_key "reviews", "users"
   add_foreign_key "shelf_books", "books"
   add_foreign_key "shelf_books", "shelves"
