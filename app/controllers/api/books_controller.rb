@@ -13,7 +13,11 @@ class Api::BooksController < ApplicationController
   end
 
   def show
-    render json: { book: BookSerializer.new(@book) }
+    if @book 
+      render json: { book: BookSerializer.new(@book) }
+    else
+      render json: { errors: @book.errors.full_messages, status: :not_accepted}
+    end
   end
 
   def update
@@ -34,13 +38,23 @@ class Api::BooksController < ApplicationController
     render json: { results: search_results, status: :ok}
   end
 
+  def find_or_create
+    @book = Book.find_by(google_id: params[:book][:google_id])
+    if @book
+      render json: { book: BookSerializer.new(@book) }
+    else
+      @book = Book.create(book_params)
+      render json: { book: BookSerializer.new(@book), status: :ok }
+    end
+  end
+
   private
 
   def book_params
-    params.require(:book).permit(:googleid, :title, :subtitle, :authors, :categories, :description, :language, :image_url, :published_date, :page_count, :google_average_rating, :rating_count)
+    params.require(:book).permit(:google_id, :title, :subtitle, :authors, :categories, :description, :language, :image_url, :published_date, :page_count, :google_average_rating, :rating_count)
   end
 
   def set_book
-    @book = Book.find_by(id: params[:id])
+    @book = Book.find(params[:id])
   end
 end
