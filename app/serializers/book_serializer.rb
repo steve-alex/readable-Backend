@@ -1,24 +1,48 @@
 class BookSerializer < ActiveModel::Serializer
-  attributes :data, :shelf_books
+  attributes :data
+
 
   def data
-    book = object
-    {
-      id: book.id,
-      google_id: book.google_id,
-      title: book.title,
-      subtitle: book.subtitle,
-      authors: authors(),
-      categories: categories(),
-      description: book.description,
-      language: book.language,
-      image_url: book.image_url,
-      published_date: book.published_date,
-      page_count: book.page_count,
-      google_average_rating: book.google_average_rating,
-      rating_count: book.rating_count
-    }
+    object
+    # @options[:current_user]
+    # {
+    #   id: book.id,
+    #   google_id: book.google_id,
+    #   title: book.title,
+    #   subtitle: book.subtitle,
+    #   authors: authors(),
+    #   categories: categories(),
+    #   description: book.description,
+    #   language: book.language,
+    #   image_url: book.image_url,
+    #   published_date: book.published_date,
+    #   page_count: book.page_count,
+    #   google_average_rating: book.google_average_rating,
+    #   rating_count: book.rating_count
+    # }
   end
+
+  # def metrics
+  #   book = object
+  #   {
+      # most_appeared_on_shelves: book.most_appeared_on_shelves,
+      # currently_reading_count: book.currently_reading_count
+  #   }
+  # end
+
+  # def users_review
+  #   book = object
+  #   book.current_users_review
+  # end
+
+  # def users_review
+  #   book = object
+  #   {
+      
+  #   }
+  # end
+
+  def 
 
   def shelf_books
     book = object
@@ -29,12 +53,11 @@ class BookSerializer < ActiveModel::Serializer
       currently_reading_count: book.currently_reading_count,
       reviews: book.reviews
     }}
-    #object.shelf_books
   end
 
-  def community_reviews
-    book = object
-  end
+  # def community_reviews
+  #   book = object
+  # end
 
   def authors
     object.authors

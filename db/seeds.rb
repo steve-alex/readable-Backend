@@ -14,3 +14,6 @@ c.books << b
 s = ShelfBook.create(book_id: b.id, shelf_id: Shelf.all.sample.id) 
 d = Review.create(user_id: a.id, shelf_book_id: a.shelves[0].shelf_books.all.sample.id, sentiment: 75, content: "It's okay I guess")
 e = Book.create(Client.new("Crime and Punishment").get_search_data[0])
+
+a = Shelf.all[0]
+b = Book.create(Client.new("Astrophysics for people in a hurry").get_search_data[0])

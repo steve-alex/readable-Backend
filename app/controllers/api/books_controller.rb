@@ -1,7 +1,7 @@
 class Api::BooksController < ApplicationController
   before_action :set_book, only: [:show, :update, :destroy]
   require "#{Rails.root}/app/apis/client.rb"
-
+  require "#{Rails.root}/app/serializers/book_serializer_test.rb"
 
   def create
     book = Book.create(book_params)
@@ -13,8 +13,9 @@ class Api::BooksController < ApplicationController
   end
 
   def show
+    current_user = set_current_user
     if @book 
-      render json: { book: BookSerializer.new(@book) }
+      render json: { book: BookSerializerTest.new(@book, current_user).serialize_as_json  }
     else
       render json: { errors: @book.errors.full_messages, status: :not_accepted}
     end
@@ -39,12 +40,13 @@ class Api::BooksController < ApplicationController
   end
 
   def find_or_create
+    current_user = set_current_user
     @book = Book.find_by(google_id: params[:book][:google_id])
     if @book
-      render json: { book: BookSerializer.new(@book) }
+      render json: { book: BookSerializerTest.new(@book, current_user).serialize_as_json, status: :ok}
     else
       @book = Book.create(book_params)
-      render json: { book: BookSerializer.new(@book), status: :ok }
+      render json: { book: BookSerializerTest.new(@book, current_user).serialize_as_json, status: :ok}
     end
   end
 
@@ -55,6 +57,6 @@ class Api::BooksController < ApplicationController
   end
 
   def set_book
-    @book = Book.find(params[:id])
+    @book = Book.find(params[:id]) || Book.find_by(google_id: params[:google_id])
   end
 end

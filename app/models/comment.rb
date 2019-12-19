@@ -9,4 +9,8 @@ class Comment < ApplicationRecord
       message: "Content cannot be longer than 900 characters"
     }
   }
+
+  def like_count
+    self.likes.length
+  end
 end

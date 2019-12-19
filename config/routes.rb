@@ -2,7 +2,7 @@ Rails.application.routes.draw do
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
   namespace :api do
     get 'users/validate', to: 'users#validate'
-    get 'users/:id/timeline', to: 'users#timeline'
+    get 'users/timeline', to: 'users#timeline'
     post 'users/login', to: 'users#login'
 
     post 'books/search', to: 'books#search'

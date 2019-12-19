@@ -34,15 +34,10 @@ class Book < ApplicationRecord
   end
 
   def review_distribution
-    review_distribution = {"review_count" => 0}
+    review_distribution = {1 => 0, 2 =>0, 3 => 0, 4 =>0, 5 =>0}
     self.reviews.each{ |review|
       rating = review.rating
-      review_distribution["review_count"] += 1
-      if review_distribution[rating]
-        review_distribution[rating] += 1
-      else
-        review_distribution[rating] = 1
-      end
+      review_distribution[rating] += 1
     }
     review_distribution
   end

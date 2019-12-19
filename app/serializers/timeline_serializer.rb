@@ -25,3 +25,5 @@ class TimelineSerializer < ActiveModel::Serializer
   end
 
 end
+
+#What are the custom methods under the attribute doing under the timline serializer 
