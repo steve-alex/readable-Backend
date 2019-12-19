@@ -3,7 +3,6 @@ class Api::UsersController < ApplicationController
   require "#{Rails.root}/app/serializers/timeline_serializer_test.rb"
 
   def create
-    # byebug
     user = User.create(
       fullname: params[:fullname],
       username: params[:username],

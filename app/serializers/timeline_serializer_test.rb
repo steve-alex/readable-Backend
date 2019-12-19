@@ -6,10 +6,15 @@ class TimelineSerializerTest
 
   def serialize_as_json
     {
-      timeline_posts: [
+      timeline_posts: 
         @user.timeline_posts.map{|post| 
-          {
-            post: post,
+          { 
+            content: post.content,
+            created_at: post.created_at,
+            id: post.id,
+            rating: post.rating,
+            sentiment: post.sentiment,
+            updated_at: post.updated_at,
             book: {
               book_id: post.book.id,
               title: post.book.title,
@@ -23,29 +28,29 @@ class TimelineSerializerTest
               id: post.user.id,
               username: post.user.username
             },
-            comments: {post.comments.map{|comment|
+            comments: post.comments.map{|comment|
               {
-                comment: comment,
+                content: comment.content,
+                created_at: comment.created_at,
                 user: {
                   id: comment.user.id,
                   username: comment.user.username
-                }
-              }}
+                },
+                likes: comment.likes
+              }
             },
-            likes: {post.likes.map{|like|
+            likes: post.likes.map{|like|
               {
                 like: like,
                 user: {
                   id: like.user.id,
                   username: like.user.username
                 }
-              }}
+              }
             }
           }
         }
-      ]
     }
-        
   end
 
 end
