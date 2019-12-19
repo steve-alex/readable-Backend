@@ -1,8 +1,9 @@
 class Api::UsersController < ApplicationController
-  before_action :set_user, only: [:show, :update, :destroy, :timeline]
+  before_action :set_user, only: [:show, :update, :destroy, :timeline, :profile]
+  require "#{Rails.root}/app/serializers/timeline_serializer_test.rb"
+  require "#{Rails.root}/app/serializers/user_profile_serializer.rb"
 
   def create
-    # byebug
     user = User.create(
       fullname: params[:fullname],
       username: params[:username],
@@ -45,7 +46,7 @@ class Api::UsersController < ApplicationController
 
   def timeline
     current_user = set_current_user
-    render json: { timeline: TimelineSerializer.new(current_user) }
+    render json: { timeline: TimelineSerializerTest.new(current_user).serialize_as_json }
   end
 
   def validate
@@ -53,6 +54,15 @@ class Api::UsersController < ApplicationController
       render json: { user: UserSerializer.new(@current_user), token: issue_token({ user_id: @current_user.id }) }
     else
       render json: { errors: "Invalid token", status: :not_accepted}
+    end
+  end
+
+  def profile
+    current_user = set_current_user
+    if @user
+      render json: { profile: UserProfileSerializer.new(@user, current_user).serialize_as_json }
+    else
+      render json: { errors: "User not does not exist", status: :not_accepted}
     end
   end
 

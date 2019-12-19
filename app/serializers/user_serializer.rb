@@ -1,5 +1,5 @@
 class UserSerializer < ActiveModel::Serializer
-  attributes :data, :shelves, :currently_reading, :reviews, :progresses
+  attributes :data, :shelves, :reviews, :progresses
 
   def data
     {
@@ -20,9 +20,9 @@ class UserSerializer < ActiveModel::Serializer
     object.shelves.sort_by{ |shelf| shelf.updated_at }
   end
 
-  def currently_reading
-    object.currently_reading_books
-  end
+  # def currently_reading
+  #   object.currently_reading_books
+  # end
 
   def reviews
     object.reviews.sort_by{ |review| review.created_at }.reverse!
