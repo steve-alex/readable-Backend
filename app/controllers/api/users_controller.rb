@@ -1,5 +1,6 @@
 class Api::UsersController < ApplicationController
   before_action :set_user, only: [:show, :update, :destroy, :timeline]
+  require "#{Rails.root}/app/serializers/timeline_serializer_test.rb"
 
   def create
     # byebug
@@ -45,7 +46,7 @@ class Api::UsersController < ApplicationController
 
   def timeline
     current_user = set_current_user
-    render json: { timeline: TimelineSerializer.new(current_user) }
+    render json: { timeline: TimelineSerializerTest.new(current_user).serialize_as_json }
   end
 
   def validate
