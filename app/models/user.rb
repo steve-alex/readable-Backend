@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   has_secure_password
+  has_one_attached :avatar
   has_many :shelves
-  has_many :shelf_books, through: :shelves
   has_many :likes
   has_many :comments
   has_many :reviews

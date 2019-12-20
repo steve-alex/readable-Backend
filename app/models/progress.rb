@@ -1,6 +1,7 @@
 class Progress < ApplicationRecord
   belongs_to :user
-  belongs_to :shelf_book
+  has_many :updates
+  has_many :copies, through: :updates
   has_many :likes, :as => :likeable
   has_many :comments, :as => :commentable
 
