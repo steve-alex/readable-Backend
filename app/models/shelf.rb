@@ -1,8 +1,7 @@
 class Shelf < ApplicationRecord
   belongs_to :user
-  has_many :shelf_books
-  has_many :books, through: :shelf_books
-  has_many :progresses
+  has_many :shelf_copies
+  has_many :copies, through: :shelf_copies
 
   validates :name, {
     length: { maximum: 42 ,

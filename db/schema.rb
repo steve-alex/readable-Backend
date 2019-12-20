@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_20_102859) do
+ActiveRecord::Schema.define(version: 2019_12_20_194021) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -65,6 +65,13 @@ ActiveRecord::Schema.define(version: 2019_12_20_102859) do
     t.index ["user_id"], name: "index_comments_on_user_id"
   end
 
+  create_table "copies", force: :cascade do |t|
+    t.bigint "book_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["book_id"], name: "index_copies_on_book_id"
+  end
+
   create_table "follows", force: :cascade do |t|
     t.integer "follower_id"
     t.integer "followed_id"
@@ -86,36 +93,34 @@ ActiveRecord::Schema.define(version: 2019_12_20_102859) do
   end
 
   create_table "progresses", force: :cascade do |t|
-    t.integer "current_page"
-    t.integer "total_pages"
+    t.string "content"
     t.bigint "user_id", null: false
-    t.bigint "shelf_book_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["shelf_book_id"], name: "index_progresses_on_shelf_book_id"
+    t.boolean "published"
     t.index ["user_id"], name: "index_progresses_on_user_id"
   end
 
   create_table "reviews", force: :cascade do |t|
+    t.string "summary"
     t.string "content"
     t.integer "rating"
     t.integer "sentiment"
     t.bigint "user_id", null: false
-    t.bigint "book_id", null: false
+    t.bigint "copy_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["book_id"], name: "index_reviews_on_book_id"
+    t.index ["copy_id"], name: "index_reviews_on_copy_id"
     t.index ["user_id"], name: "index_reviews_on_user_id"
   end
 
-  create_table "shelf_books", force: :cascade do |t|
-    t.boolean "currently_reading", default: false
-    t.bigint "book_id", null: false
+  create_table "shelf_copies", force: :cascade do |t|
     t.bigint "shelf_id", null: false
+    t.bigint "copy_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["book_id"], name: "index_shelf_books_on_book_id"
-    t.index ["shelf_id"], name: "index_shelf_books_on_shelf_id"
+    t.index ["copy_id"], name: "index_shelf_copies_on_copy_id"
+    t.index ["shelf_id"], name: "index_shelf_copies_on_shelf_id"
   end
 
   create_table "shelves", force: :cascade do |t|
@@ -124,6 +129,16 @@ ActiveRecord::Schema.define(version: 2019_12_20_102859) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_shelves_on_user_id"
+  end
+
+  create_table "updates", force: :cascade do |t|
+    t.integer "page_number"
+    t.bigint "progress_id", null: false
+    t.bigint "copy_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["copy_id"], name: "index_updates_on_copy_id"
+    t.index ["progress_id"], name: "index_updates_on_progress_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -142,12 +157,14 @@ ActiveRecord::Schema.define(version: 2019_12_20_102859) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "comments", "users"
+  add_foreign_key "copies", "books"
   add_foreign_key "likes", "users"
-  add_foreign_key "progresses", "shelf_books"
   add_foreign_key "progresses", "users"
-  add_foreign_key "reviews", "books"
+  add_foreign_key "reviews", "copies"
   add_foreign_key "reviews", "users"
-  add_foreign_key "shelf_books", "books"
-  add_foreign_key "shelf_books", "shelves"
+  add_foreign_key "shelf_copies", "copies"
+  add_foreign_key "shelf_copies", "shelves"
   add_foreign_key "shelves", "users"
+  add_foreign_key "updates", "copies"
+  add_foreign_key "updates", "progresses"
 end
