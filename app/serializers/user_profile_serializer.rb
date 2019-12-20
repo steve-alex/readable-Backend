@@ -24,8 +24,8 @@ class UserProfileSerializer
       genres: @user.genres,
       favourite_genres: @user.favourite_genres,
       favourite_authors: @user.favourite_authors,
-      books_in_common: @user.books_in_common(@current_user)
-    }
+      books_in_common: @user.books_in_common(@current_user),
+      follow_object: @current_user.follow_object(@user)    }
   end
 
   def get_fullname

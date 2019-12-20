@@ -49,6 +49,12 @@ class Api::UsersController < ApplicationController
     render json: { timeline: TimelineSerializerTest.new(current_user).serialize_as_json }
   end
 
+  def follow
+    current_user = set_current_user
+    render json: { message: "Deleted user", status: :ok}
+
+  end
+
   def validate
     if logged_in
       render json: { user: UserSerializer.new(@current_user), token: issue_token({ user_id: @current_user.id }) }

@@ -49,6 +49,14 @@ class User < ApplicationRecord
   #   }
   # }
 
+  def following?(user)
+    self.followed.include?(user)
+  end
+
+  def follow_object(user)
+    self.follows_as_follower.select{|follow| follow.followed_id == user.id}.flatten
+  end
+
   def posts
     posts = Array(self.reviews).concat(Array(self.progresses)).flatten
     posts.sort{ |post| post.created_at }
@@ -71,15 +79,15 @@ class User < ApplicationRecord
   end
 
   def profile_shelf_display
-    self.shelves.map{|shelf|
+    profile_shelf_display = {}
+    self.shelves.each{|shelf|
       books = shelf.books
-      {
-        shelf.name => {
-            image_urls: books.shuffle.slice(0, 4).map{ |book| book.image_url},
-            book_count: books.length
-        }
+      profile_shelf_display[shelf.name] = {
+        image_urls: books.shuffle.slice(0, 4).map{ |book| book.image_url},
+        book_count: books.length
       }
     }
+    profile_shelf_display
   end
 
   def books
