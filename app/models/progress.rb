@@ -44,7 +44,8 @@ class Progress < ApplicationRecord
         user_id: comment.content,
         username: comment.user.username,
         user_avatar: comment.user.avatar,
-        created_at: comment.created_at
+        created_at: comment.created_at,
+        likes: comment.likes
       }
     }
   end

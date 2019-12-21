@@ -66,6 +66,10 @@ class User < ApplicationRecord
     followed_users_posts = self.followed.map{ |user| user.posts }.flatten
     followed_users_posts.sort_by{ |post| post.created_at }.reverse!
   end
+
+  def copies
+    self.shelves.map{ |shelf| shelf.copies }.flatten
+  end
   
   def books
     self.shelves.map{ |shelf| shelf.books }.flatten.uniq
@@ -73,6 +77,10 @@ class User < ApplicationRecord
 
   def shelves_containing_book(book)
     self.shelves.select{ |shelf| shelf.books.include?(book) }
+  end
+
+  def find_copy_by_book_id(book_id)
+    self.copies.select{ |copy| copy.book_id == book_id }
   end
 
   def profile_shelf_display

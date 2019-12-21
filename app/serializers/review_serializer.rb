@@ -11,7 +11,7 @@ class ReviewSerializer
       summary: @review.summary,
       content: @review.content,
       rating: @review.rating,
-      sentiment: @review.sentiment
+      sentiment: @review.sentiment,
       user: {
         id: @review.user.id,
         username: @review.user.username,

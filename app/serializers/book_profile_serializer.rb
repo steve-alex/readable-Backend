@@ -22,7 +22,7 @@ class BookProfileSerializer
       rating_count: @book.rating_count,
       metrics: {
         most_appeared_on_shelves: @book.most_appeared_on_shelves,
-        currently_reading_count: @book.currently_reading_count,
+        # currently_reading_count: @book.currently_reading_count,
         review_distribution: @book.review_distribution
       },
       current_users_reviews: current_users_reviews(),

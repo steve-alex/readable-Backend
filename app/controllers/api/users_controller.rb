@@ -14,7 +14,6 @@ class Api::UsersController < ApplicationController
   end
 
   def login
-    byebug
     user = User.find_by(email: params[:email])
     if user && user.authenticate(params[:password])
       render json: { user: UserSerializer.new(user).serialize_as_json, token: issue_token({ user_id: user.id }) }

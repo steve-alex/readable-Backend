@@ -15,9 +15,7 @@ class UserSerializer
       about: @user.about,
       followers: @user.followers.length,
       following: @user.followed.length,
-      current_reading:{
-        progresses: @user.progresses
-      }
+      shelves: @user.shelves
     }
   end
 
