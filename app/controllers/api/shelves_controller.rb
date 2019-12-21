@@ -33,14 +33,23 @@ class Api::ShelvesController < ApplicationController
 
   def add_book
     shelf = Shelf.find(params[:shelf_id])
+
     book = Book.find_by(google_id: params[:book][:google_id])
+    unless book
+      book = Book.create(book_params)
+    end
+
     copy = shelf.copies.find_by(book_id: book.id)
+    unless copy
+      copy = Copy.create(book_id: book.id)
+    end
     
     if shelf.copies.include?(copy)
+      byebug
       render json: { errors: "#{copy.book.title} is already in #{shelf.name}"}
     else
       if shelf && book && copy
-        shelf.books << book
+        shelf.copies << copy
         render json: { shelf: shelf, message: "#{book.title} has been added to #{shelf.name}", status: :ok }
       else
         render json: { errors: @shelf.errors.full_messages, status: :not_accepted }
