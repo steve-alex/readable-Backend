@@ -13,14 +13,13 @@ class Api::ReviewsController < ApplicationController
         user_id: params[:user_id],
         copy_id: copy[0].id
       )
+      if review.valid?
+        render json: { review: ReviewSerializer.new(review).serialize_as_json, status: :ok }
+      else
+        render json: { errors: review.errors.full_messages, status: :not_accepted }
+      end
     else
       render json: { errors: "Add this book to a shelf to leave a review", status: :not_accepted }
-    end
-
-    if review.valid?
-      render json: { review: ReviewSerializer.new(review).serialize_as_json, status: :ok }
-    else
-      render json: { errors: review.errors.full_messages, status: :not_accepted }
     end
   end
   
