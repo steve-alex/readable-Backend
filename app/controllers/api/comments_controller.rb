@@ -1,17 +1,18 @@
 class Api::CommentsController < ApplicationController
   before_action :set_comment, only: [:show, :update, :destroy]
+  require "#{Rails.root}/app/serializers/comment_serializer.rb"
 
   def create
     comment = Comment.create(comment_params)
     if comment.valid?
-      render json: { comment: comment, status: :ok }
+      render json: { comment: CommentSerializer.new(comment).serialize_as_json, status: :ok }
     else
       render json: { errors: comment.errors.full_messages, status: :not_accepted }
     end
   end
 
   def show
-    render json: @comment
+    render json: { comment: CommentSerializer.new(@comment).serialize_as_json, status: :ok }
   end
 
   def destroy

@@ -2,33 +2,29 @@ class Api::UsersController < ApplicationController
   before_action :set_user, only: [:show, :update, :destroy, :timeline, :profile]
   require "#{Rails.root}/app/serializers/timeline_serializer_test.rb"
   require "#{Rails.root}/app/serializers/user_profile_serializer.rb"
+  require "#{Rails.root}/app/serializers/user_serializer.rb"
 
   def create
-    user = User.create(
-      fullname: params[:fullname],
-      username: params[:username],
-      email: params[:email],
-      password: params[:password],
-      password_confirmation: params[:password_confirmation]
-    )
+    user = User.create(user_params)
     if user.valid?
-      render json: {user: UserSerializer.new(user), token: issue_token({ user_id: user.id })}
+      render json: {user: UserSerializer.new(user).serialize_as_json, token: issue_token({ user_id: user.id })}
     else
       render json: { errors: user.errors.full_messages, status: :not_accepted }
     end
   end
 
   def login
+    byebug
     user = User.find_by(email: params[:email])
     if user && user.authenticate(params[:password])
-      render json: { user: UserSerializer.new(user), token: issue_token({ user_id: user.id }) }
+      render json: { user: UserSerializer.new(user).serialize_as_json, token: issue_token({ user_id: user.id }) }
     else
       render json: { errors: "Email or password incorrect", status: :not_accepted }
     end
   end
 
   def show
-    render json: { user: UserSerializer.new(@user) }
+    render json: { user: UserSerializer.new(@user).serialize_as_json }
   end
 
   def update
@@ -57,7 +53,7 @@ class Api::UsersController < ApplicationController
 
   def validate
     if logged_in
-      render json: { user: UserSerializer.new(@current_user), token: issue_token({ user_id: @current_user.id }) }
+      render json: { user: UserSerializer.new(@current_user).serialize_as_json, token: issue_token({ user_id: @current_user.id }) }
     else
       render json: { errors: "Invalid token", status: :not_accepted}
     end
@@ -75,7 +71,7 @@ class Api::UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:fullname, :username, :email, :password)
+    params.require(:user).permit(:fullname, :fullnameviewable, :username, :email, :password, :password_confirmation, :gender, :city, :cityviewable, :about)
   end
 
   def login_params

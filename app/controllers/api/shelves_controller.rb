@@ -11,7 +11,11 @@ class Api::ShelvesController < ApplicationController
   end
   
   def show
-    render json: @shelf
+    if @shelf
+      render json: { shelf: @shelf, status: :ok }
+    else
+      render json: { errors: @shelf.errors.full_messages, status: :not_accepted }
+    end
   end
 
   def update
@@ -28,17 +32,19 @@ class Api::ShelvesController < ApplicationController
   end
 
   def add_book
-    shelf = Shelf.find(params[:shelfId])
+    shelf = Shelf.find(params[:shelf_id])
     book = Book.find_by(google_id: params[:book][:google_id])
-    if !book
-      book = Book.create(book_params)
-    end
+    copy = shelf.copies.find_by(book_id: book.id)
     
-    if shelf.books.include?(book)
-      render json: { errors: "#{book.title} is already in #{shelf.name}"}
+    if shelf.copies.include?(copy)
+      render json: { errors: "#{copy.book.title} is already in #{shelf.name}"}
     else
-      shelf.books << book
-      render json: { message: "#{book.title} has been added to #{shelf.name}"}
+      if shelf && book && copy
+        shelf.books << book
+        render json: { shelf: shelf, message: "#{book.title} has been added to #{shelf.name}", status: :ok }
+      else
+        render json: { errors: @shelf.errors.full_messages, status: :not_accepted }
+      end
     end
   end
 
@@ -53,7 +59,7 @@ class Api::ShelvesController < ApplicationController
   end
 
   def set_shelf
-    @shelf = Shelf.find_by(id: params[:id])
+    @shelf = Shelf.find(params[:id])
   end
 
 end

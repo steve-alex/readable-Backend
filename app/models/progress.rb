@@ -14,8 +14,39 @@ class Progress < ApplicationRecord
   # before_create do
   #   self.
   # end
+  def books
+    self.copies.map{ |copy| copy.book }.uniq
+  end
+
 
   def most_liked_comment
     self.comments.sort_by{ |comments| comment.like_count }
   end
+
+  def display_updates_by_book
+    self.copies.map{ |copy|
+      {
+        copy_id: copy.id,
+        book_id: copy.book.id,
+        title: copy.book.title,
+        subtitle: copy.book.subtitle,
+        authors: copy.book.authors,
+        updates: copy.updates.reverse
+      }
+    }
+  end
+
+  def display_comments
+    self.comments.map{ |comment|
+      {
+        id: comment.id,
+        content: comment.content,
+        user_id: comment.content,
+        username: comment.user.username,
+        user_avatar: comment.user.avatar,
+        created_at: comment.created_at
+      }
+    }
+  end
+
 end

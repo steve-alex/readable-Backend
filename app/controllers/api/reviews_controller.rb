@@ -3,13 +3,7 @@ class Api::ReviewsController < ApplicationController
 
   def create
     current_user = set_current_user
-    review = Review.create(
-      content: params[:content],
-      rating: params[:rating],
-      sentiment: params[:sentiment],
-      user_id: current_user.id,
-      book_id: params[:book_id]
-    )
+    review = Review.create(reviews_params)
     if review.valid?
       render json: { review: ReviewSerializer.new(review), status: :ok }
     else
@@ -37,12 +31,11 @@ class Api::ReviewsController < ApplicationController
   private
 
   def review_params
-    params.require(:review).permit(:content, :rating, :sentiment, :user_id, :book_id)
+    params.require(:review).permit(:summary, :content, :rating, :sentiment, :user_id, :copy_id)
   end
   
   def set_review
     @review = Review.find_by(id: params[:id])
   end
-
 
 end

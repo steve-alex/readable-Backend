@@ -1,12 +1,13 @@
 class Api::BooksController < ApplicationController
   before_action :set_book, only: [:show, :update, :destroy]
   require "#{Rails.root}/app/apis/client.rb"
-  require "#{Rails.root}/app/serializers/book_serializer_test.rb"
+  require "#{Rails.root}/app/serializers/book_profile_serializer.rb"
+  require "#{Rails.root}/app/serializers/book_serializer.rb"
 
   def create
     book = Book.create(book_params)
     if book.valid?
-      render json: { book: BookSerializer.new(book), status: :ok }
+      render json: { book: BookSerializer.new(book).serialize_as_json, status: :ok }
     else
       render json: { errors: book.errors.full_messages, status: :not_accepted }
     end
@@ -15,7 +16,7 @@ class Api::BooksController < ApplicationController
   def show
     current_user = set_current_user
     if @book 
-      render json: { book: BookSerializerTest.new(@book, current_user).serialize_as_json  }
+      render json: { book: BookProfileSerializer.new(@book, current_user).serialize_as_json  }
     else
       render json: { errors: @book.errors.full_messages, status: :not_accepted}
     end
@@ -23,7 +24,7 @@ class Api::BooksController < ApplicationController
 
   def update
     if @book.update(book_params)
-      render json: { book: BookSerializer.new(@book), message: "Updated book", status: :ok }
+      render json: { book: BookSerializer.new(@book).serialize_as_json, message: "Updated book", status: :ok }
     else
       render json: { message: @book.errors.full_messages, status: :not_accepted}
     end
@@ -32,6 +33,16 @@ class Api::BooksController < ApplicationController
   def destroy
     @book.destroy
     render json: { message: "Deleted book", status: :ok}
+  end
+
+  def show_page
+    #This should be the route for each books
+    current_user = set_current_user
+    if @book 
+      render json: { book: BookProfileSerializer.new(@book, current_user).serialize_as_json, status: :ok }
+    else
+      render json: { errors: @book.errors.full_messages, status: :not_accepted}
+    end
   end
 
   def search
@@ -43,10 +54,10 @@ class Api::BooksController < ApplicationController
     current_user = set_current_user
     @book = Book.find_by(google_id: params[:book][:google_id])
     if @book
-      render json: { book: BookSerializerTest.new(@book, current_user).serialize_as_json, status: :ok}
+      render json: { book: BookProfileSerializer.new(@book, current_user).serialize_as_json, status: :ok}
     else
       @book = Book.create(book_params)
-      render json: { book: BookSerializerTest.new(@book, current_user).serialize_as_json, status: :ok}
+      render json: { book: BookProfileSerializer.new(@book, current_user).serialize_as_json, status: :ok}
     end
   end
 

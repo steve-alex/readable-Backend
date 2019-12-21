@@ -1,4 +1,4 @@
-class BookSerializerTest
+class BookProfileSerializer
 
   def initialize(book, current_user)
     @book = book

@@ -1,27 +1,25 @@
-class ProgressSerializer < ActiveModel::Serializer
-  attributes :id, :current_page, :total_pages, :user_id, :shelf_book_id, :created_at, :updated_at, :user, :book
-  has_many :likes
-  has_many :comments
-
-  def user
-    progress = object
-    {
-      username: object.user.username
-    }
+class ProgressSerializer
+  
+  def initialize(progress)
+    @progress = progress
   end
 
-  def book
-    book = object.shelf_book.book
+  def serializer_as_json
     {
-      id: book.id,
-      google_id: book.google_id,
-      title: book.title,
-      subtitle: book.subtitle,
-      authors: book.authors,
-      categories: book.categories,
-      description: book.description,
-      page_count: book.page_count
+      id: @progress.id,
+      user_id: @progress.user_id,
+      content: @progress.content,
+      published: @progress.published,
+      updates: @progress.display_updates_by_book(),
+      user: {
+        id: @progress.user.id,
+        username: @progress.user.username,
+        avatar: @progress.user.avatar
+      },
+      likes: @progress.likes,
+      comments: @progress.display_comments,
+      created_at: @progress.created_at
     }
   end
-
+  
 end

@@ -66,36 +66,31 @@ class User < ApplicationRecord
     followed_users_posts = self.followed.map{ |user| user.posts }.flatten
     followed_users_posts.sort_by{ |post| post.created_at }.reverse!
   end
-
-  def shelves_containing_book(book)
-    self.shelves.select{ |shelf|
-      shelf_ids = shelf.books{ |book| book.id }
-      shelf_ids.include?(book)
-    }
+  
+  def books
+    self.shelves.map{ |shelf| shelf.books }.flatten.uniq
   end
 
-  def unique_books
-    self.shelf_books.uniq{ |shelf_book| shelf_book.book.google_id }
+  def shelves_containing_book(book)
+    self.shelves.select{ |shelf| shelf.books.include?(book) }
   end
 
   def profile_shelf_display
-    profile_shelf_display = {}
-    self.shelves.each{|shelf|
-      books = shelf.books
-      profile_shelf_display[shelf.name] = {
-        image_urls: books.shuffle.slice(0, 4).map{ |book| book.image_url},
-        book_count: books.length
-      }
-    }
-    profile_shelf_display
-  end
-
-  def books
-    books = self.shelves.map{ |shelf| shelf.books }.flatten.uniq
+    # profile_shelf_display = {}
+    # self.shelves.each{|shelf|
+    #   books = shelf.books
+    #   profile_shelf_display[shelf.name] = {
+    #     image_urls: books.shuffle.slice(0, 4).map{ |book| book.image_url},
+    #     book_count: books.length
+    #   }
+    # }
+    # profile_shelf_display
+    #Rethink this whole function, you wnat more than just 4 books coming back each time right?
   end
 
   def genres
-    genres = self.books.map{ |book| book.categories }.uniq
+    books = self.shelves.map{ |shelf| shelf.books }.flatten
+    genres = books.map{ |book| book.categories }
   end
 
   def books_in_common(current_user)

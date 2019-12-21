@@ -1,47 +1,36 @@
-class UserSerializer < ActiveModel::Serializer
-  attributes :data, :shelves, :reviews, :progresses
+class UserSerializer
+  def initialize(user)
+    @user = user
+  end
 
-  def data
+  def serialize_as_json
     {
-      id: object.id,
+      id: @user.id,
+      id: @user.id,
       fullname: get_fullname(),
-      username: object.username,
-      email: object.email, 
-      gender: object.gender, 
+      username: @user.username,
+      email: @user.email, 
+      gender: @user.gender, 
       city: get_city(),
-      about: object.about,
-      followers: object.followers.length,
-      following: object.followed.length,
-      book_count: object.unique_books.length
+      about: @user.about,
+      followers: @user.followers.length,
+      following: @user.followed.length,
+      current_reading:{
+        progresses: @user.progresses
+      }
     }
   end
 
-  def shelves
-    object.shelves.sort_by{ |shelf| shelf.updated_at }
-  end
-
-  # def currently_reading
-  #   object.currently_reading_books
-  # end
-
-  def reviews
-    object.reviews.sort_by{ |review| review.created_at }.reverse!
-  end
-
-  def progresses
-    object.progresses.sort_by{ |progress| progress.created_at }.reverse!
-  end
-
   def get_fullname
-    if object.fullnameviewable
-      return object.fullname
+    if @user.fullnameviewable
+      return @user.fullname
     end
     nil
   end
 
   def get_city
-    if object.cityviewable
-      return object.city
+    if @user.cityviewable
+      return @user.city
     end
     nil
   end

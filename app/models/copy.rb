@@ -5,4 +5,5 @@ class Copy < ApplicationRecord
   has_many :updates
   has_many :progresses, through: :updates
   has_many :reviews
+
 end

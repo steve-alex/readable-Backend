@@ -13,4 +13,26 @@ class Shelf < ApplicationRecord
       message: "Shelf names must be unique" }
   }
 
+  def find_copy(copy_id)
+    self.copies.select{ |copy| copy.id == copy_id }
+  end
+
+  def books
+    self.copies.map{ |copy| copy.book }
+  end
+
+  def display_books
+    self.copies.map{ |copy| 
+      {
+        id: copy.book.id,
+        google_id: book.google_id,
+        title: book.title,
+        author: book.authors,
+        image_url: book.image_url,
+        google_rating: book.google_average_rating,
+        created_at: copy.created_at
+      }
+    }
+  end
+
 end

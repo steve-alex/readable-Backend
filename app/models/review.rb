@@ -26,4 +26,17 @@ class Review < ApplicationRecord
     self.comments.sort_by{ |comments| comment.like_count }
   end
 
+  def display_comments
+    self.comments.map{ |comment|
+      {
+        id: comment.id,
+        content: comment.content,
+        user_id: comment.content,
+        username: comment.user.username,
+        user_avatar: comment.user.avatar,
+        created_at: comment.created_at
+      }
+    }
+  end
+
 end
