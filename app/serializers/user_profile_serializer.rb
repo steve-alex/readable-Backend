@@ -17,7 +17,7 @@ class UserProfileSerializer
         about: @user.about,
         follower_count: @user.followers.length,
         following_count: @user.followed.length,
-        book_count: @user.unique_books.length
+        book_count: @user.copies.length
       },
       currently_readng: nil,
       shelves: @user.profile_shelf_display, 
@@ -25,7 +25,8 @@ class UserProfileSerializer
       favourite_genres: @user.favourite_genres,
       favourite_authors: @user.favourite_authors,
       books_in_common: @user.books_in_common(@current_user),
-      follow_object: @current_user.follow_object(@user)    }
+      follow_object: @current_user.follow_object(@user)
+    }
   end
 
   def get_fullname

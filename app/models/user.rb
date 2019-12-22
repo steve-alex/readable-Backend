@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  include Rails.application.routes.url_helpers
   has_secure_password
   has_one_attached :avatar
   has_many :shelves
@@ -84,16 +85,26 @@ class User < ApplicationRecord
   end
 
   def profile_shelf_display
-    # profile_shelf_display = {}
-    # self.shelves.each{|shelf|
-    #   books = shelf.books
-    #   profile_shelf_display[shelf.name] = {
-    #     image_urls: books.shuffle.slice(0, 4).map{ |book| book.image_url},
-    #     book_count: books.length
-    #   }
-    # }
-    # profile_shelf_display
-    #Rethink this whole function, you wnat more than just 4 books coming back each time right?
+    profile_shelf_display = {}
+    self.shelves.each{ |shelf|
+      copies = shelf.copies.shuffle.slice(0, 4)
+      profile_shelf_display[shelf.name] = {
+        book_count: shelf.copies.length,
+        books_to_display: get_books_to_display(copies)
+      }
+    }
+    profile_shelf_display
+  end
+
+  def get_books_to_display(copies)
+    copies.map{ |copy| 
+      {
+        copy_id: copy.id,
+        book_id: copy.book.id,
+        title: copy.book.title,
+        image_url: copy.book.image_url
+      }
+    }
   end
 
   def genres
@@ -142,6 +153,24 @@ class User < ApplicationRecord
       end
     }
     authors_hash
+  end
+
+  def safe_update(params)
+    self.avatar.purge
+    self.avatar.attach(params[:file])
+    self.update(
+      fullname: params[:fullname],
+      fullnameviewable: params[:fullnameviewable],
+      username: params[:username],
+      gender: params[:gender],
+      city: params[:city],
+      cityviewable: params[:cityviewable],
+      about: params[:about]
+    )
+  end
+
+  def get_avatar_url
+    url_for(self.avatar)
   end
 
 end

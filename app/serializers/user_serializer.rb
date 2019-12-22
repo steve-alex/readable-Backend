@@ -6,7 +6,7 @@ class UserSerializer
   def serialize_as_json
     {
       id: @user.id,
-      id: @user.id,
+      avatar: @user.get_avatar_url,
       fullname: get_fullname(),
       username: @user.username,
       email: @user.email, 

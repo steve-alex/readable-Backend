@@ -26,9 +26,11 @@ class Api::UsersController < ApplicationController
     render json: { user: UserSerializer.new(@user).serialize_as_json }
   end
 
+
   def update
-    if @user.update(user_params)
-      render json: { user: UserSerializer.new(@user), message: "Updated user details", status: :ok}
+    @user.safe_update(params)
+    if @user
+      render json: { user: UserSerializer.new(@user).serialize_as_json, message: "Updated profile picture" }
     else
       render json: { message: @user.errors.full_messages, status: :not_accepted}
     end
@@ -40,12 +42,12 @@ class Api::UsersController < ApplicationController
   end
 
   def timeline
-    current_user = set_current_user
+    current_user = set_current_user()
     render json: { timeline: TimelineSerializerTest.new(current_user).serialize_as_json }
   end
 
   def follow
-    current_user = set_current_user
+    current_user = set_current_user()
     render json: { message: "Deleted user", status: :ok}
 
   end
@@ -59,7 +61,7 @@ class Api::UsersController < ApplicationController
   end
 
   def profile
-    current_user = set_current_user
+    current_user = set_current_user()
     if @user
       render json: { profile: UserProfileSerializer.new(@user, current_user).serialize_as_json }
     else
@@ -70,7 +72,7 @@ class Api::UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:fullname, :fullnameviewable, :username, :email, :password, :password_confirmation, :gender, :city, :cityviewable, :about)
+    params.require(:user).permit(:fullname, :fullnameviewable, :username, :email, :password, :password_confirmation, :gender, :city, :cityviewable, :about, :avatar)
   end
 
   def login_params
