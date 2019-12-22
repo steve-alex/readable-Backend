@@ -1,5 +1,7 @@
 class Api::ShelvesController < ApplicationController
   before_action :set_shelf, only: [:show, :update, :destroy]
+  require "#{Rails.root}/app/serializers/shelf_serializer.rb"
+
 
   def create
     shelf = Shelf.create(shelf_params)
@@ -12,7 +14,7 @@ class Api::ShelvesController < ApplicationController
   
   def show
     if @shelf
-      render json: { shelf: @shelf, status: :ok }
+      render json: { shelf: ShelfSerializer.new(@shelf).serialize_as_json, status: :ok }
     else
       render json: { errors: @shelf.errors.full_messages, status: :not_accepted }
     end

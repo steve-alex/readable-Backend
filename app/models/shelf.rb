@@ -25,11 +25,11 @@ class Shelf < ApplicationRecord
     self.copies.map{ |copy| 
       {
         id: copy.book.id,
-        google_id: book.google_id,
-        title: book.title,
-        author: book.authors,
-        image_url: book.image_url,
-        google_rating: book.google_average_rating,
+        google_id: copy.book.google_id,
+        title: copy.book.title,
+        author: copy.book.authors,
+        image_url: copy.book.image_url,
+        google_rating: copy.book.google_average_rating,
         created_at: copy.created_at
       }
     }

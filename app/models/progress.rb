@@ -24,13 +24,15 @@ class Progress < ApplicationRecord
   end
 
   def display_updates_by_book
-    self.copies.map{ |copy|
+    self.copies.uniq.map{ |copy|
       {
         copy_id: copy.id,
         book_id: copy.book.id,
         title: copy.book.title,
         subtitle: copy.book.subtitle,
+        image_url: copy.book.image_url,
         authors: copy.book.authors,
+        page_count: copy.book.page_count,
         updates: copy.updates.reverse
       }
     }
@@ -43,7 +45,7 @@ class Progress < ApplicationRecord
         content: comment.content,
         user_id: comment.content,
         username: comment.user.username,
-        user_avatar: comment.user.avatar,
+        user_avatar: comment.user.get_avatar_url,
         created_at: comment.created_at,
         likes: comment.likes
       }

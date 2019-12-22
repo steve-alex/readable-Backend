@@ -89,6 +89,7 @@ class User < ApplicationRecord
     self.shelves.each{ |shelf|
       copies = shelf.copies.shuffle.slice(0, 4)
       profile_shelf_display[shelf.name] = {
+        shelf_id: shelf.id,
         book_count: shelf.copies.length,
         books_to_display: get_books_to_display(copies)
       }

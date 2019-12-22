@@ -4,7 +4,7 @@ class ProgressSerializer
     @progress = progress
   end
 
-  def serializer_as_json
+  def serialize_as_json
     {
       id: @progress.id,
       user_id: @progress.user_id,
@@ -14,7 +14,7 @@ class ProgressSerializer
       user: {
         id: @progress.user.id,
         username: @progress.user.username,
-        avatar: @progress.user.avatar
+        avatar: @progress.user.get_avatar_url
       },
       likes: @progress.likes,
       comments: @progress.display_comments,
