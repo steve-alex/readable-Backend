@@ -3,7 +3,7 @@ class Api::ReviewsController < ApplicationController
   require "#{Rails.root}/app/serializers/review_serializer.rb"
 
   def create
-    current_user = set_current_user
+    current_user = set_current_user()
     copy = current_user.find_copy_by_book_id(params[:book_id])
     if copy[0]
       review = Review.create(
