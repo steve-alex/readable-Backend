@@ -84,6 +84,10 @@ class User < ApplicationRecord
     self.copies.select{ |copy| copy.book_id == book_id }
   end
 
+  def get_latest_progress
+    self.progresses.where(published: false)[0]
+  end
+
   def profile_shelf_display
     profile_shelf_display = {}
     self.shelves.each{ |shelf|
@@ -95,6 +99,25 @@ class User < ApplicationRecord
       }
     }
     profile_shelf_display
+  end
+
+  def get_updates_by_copy
+    updates = self.progresses.map{ |progress| progress.updates }.flatten
+    copies = updates.map{ |update| update.copy }.uniq
+    # currently_reading_copes = copes.filter{ |copy| copy.currently_reading = true }
+    updates_by_copy = copies.map{ |copy| 
+      {
+        copy_id: copy.id,
+        book_id: copy.book.id,
+        title: copy.book.title,
+        page_count: copy.book.page_count,
+        subtitle: copy.book.subtitle,
+        authors: copy.book.authors,
+        currently_reading: copy.currently_reading,
+        image_url: copy.book.image_url,
+        updates: copy.updates.reverse
+      }
+    }
   end
 
   def get_books_to_display(copies)
@@ -172,6 +195,14 @@ class User < ApplicationRecord
 
   def get_avatar_url
     url_for(self.avatar)
+  end
+
+  def likes_post?(post)  
+    like = likes.find{|like| like.likeable_id == post.id && like.likeable_type == post.class.name}
+    if like
+      return like
+    end
+    false
   end
 
 end
