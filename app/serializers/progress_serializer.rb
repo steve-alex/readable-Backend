@@ -1,7 +1,8 @@
 class ProgressSerializer
   
-  def initialize(progress)
+  def initialize(progress, current_user)
     @progress = progress
+    @current_user = current_user
   end
 
   def serialize_as_json
@@ -16,6 +17,7 @@ class ProgressSerializer
         username: @progress.user.username,
         avatar: @progress.user.get_avatar_url
       },
+      current_user_likes: @current_user.likes_post?(@progress),
       likes: @progress.likes,
       comments: @progress.display_comments,
       created_at: @progress.created_at
