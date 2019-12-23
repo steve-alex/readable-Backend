@@ -24,7 +24,7 @@ class Api::ReviewsController < ApplicationController
   end
   
   def show
-    render json: { review: ReviewSerializer.new(@review).serialize_as_json }
+    render json: { review: ReviewSerializer.new(@review, @current_user).serialize_as_json }
   end
   
   def update
