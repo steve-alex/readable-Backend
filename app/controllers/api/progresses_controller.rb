@@ -5,7 +5,7 @@ class Api::ProgressesController < ApplicationController
   def create
     progress = Progress.create(progress_params)
     if progress.valid?
-      render json: { progress: ProgressSerializer.new(progress).serialize_as_json, status: :ok }
+      render json: { progress: ProgressSerializer.new(progress, @current_user).serialize_as_json, status: :ok }
     else
       render json: { errors: progress.errors.full_messages, status: :not_accepted }
     end
@@ -13,7 +13,7 @@ class Api::ProgressesController < ApplicationController
   
   def show
     if progress
-      render json: { progress: ProgressSerializer.new(progress).serialize_as_json, status: :ok }
+      render json: { progress: ProgressSerializer.new(progress, @current_user).serialize_as_json, status: :ok }
     else
       render json: {errors: progress.errors.full_messages, status: :not_accepted}
     end
@@ -21,7 +21,7 @@ class Api::ProgressesController < ApplicationController
   
   def update
     if @progress.update(progress_params)
-      render json: { progress: ProgressSerializer.new(progress).serialize_as_json, message: "Updated progress", status: :ok}
+      render json: { progress: ProgressSerializer.new(progress, @current_user).serialize_as_json, message: "Updated progress", status: :ok}
     else
       render json: { progress: @progress, message: @progress.errors.full_messages, status: :not_accepted}
     end

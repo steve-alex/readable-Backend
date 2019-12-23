@@ -1,7 +1,8 @@
 class ReviewSerializer
 
-  def initialize(review)
+  def initialize(review, current_user)
     @review = review
+    @current_user = current_user
   end
 
   def serialize_as_json
@@ -12,6 +13,7 @@ class ReviewSerializer
       content: @review.content,
       rating: @review.rating,
       sentiment: @review.sentiment,
+      current_user_likes: @current_user.likes_post?(@review),
       book: {
         id: @review.copy.book.id,
         google_id: @review.copy.book.google_id,

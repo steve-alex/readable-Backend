@@ -21,6 +21,7 @@ Rails.application.routes.draw do
     resources :shelves, only: [:create, :show, :update, :destroy]
     resources :users, only: [:create, :show, :update, :destroy]
     resources :copies, only: [:create, :show, :update, :destroy]
+    resources :updates, only: [:create, :show, :update, :destroy]
   end
 
 end

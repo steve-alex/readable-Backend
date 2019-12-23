@@ -3,8 +3,14 @@ class Api::UpdatesController < ApplicationController
 
   def create
     current_user = set_current_user
+    progress = current_user.get_latest_progress
+    update = Update.create(
+      progress_id: progress.id,
+      copy_id: params[:copy_id],
+      page_number: params[:page_number]
+    )
     if update.valid?
-      render json: { update: UpdateSerializer.new(update), status: :ok }
+      render json: { update: UpdateSerializer.new(update).serialize_as_json, status: :ok }
     else
       render json: { errors: review.errors.full_messages, status: :not_accepted }
     end
@@ -40,14 +46,5 @@ class Api::UpdatesController < ApplicationController
   def set_update
     @update = Update.find_by(id: params[:id])
   end
-
-  private
-
-  def updates_params
-    params.require(:update).permit(:page_number, :progress_id, :copy_id)
-  end
-
-  def set_update
-    @update = Update.find(params[:id])
-  end
+  
 end
