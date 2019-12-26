@@ -30,7 +30,7 @@ class ReviewSerializer
         avatar: @review.user.get_avatar_url
       },
       likes: @review.likes,
-      comments: @review.display_comments,
+      comments: @review.display_comments(@current_user),
       created_at: @review.created_at
     }
   end

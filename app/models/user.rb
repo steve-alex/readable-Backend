@@ -59,7 +59,7 @@ class User < ApplicationRecord
   end
 
   def posts
-    posts = Array(self.reviews).concat(Array(self.progresses)).flatten
+    posts = Array(self.reviews).concat(Array(self.progresses.where(published: true))).flatten
     posts.sort{ |post| post.created_at }
   end
 
@@ -101,11 +101,28 @@ class User < ApplicationRecord
     profile_shelf_display
   end
 
+  # def get_updates_by_copy
+  #   updates = self.progresses.map{ |progress| progress.updates }.flatten
+  #   copies = updates.map{ |update| update.copy }.uniq
+  #   # currently_reading_copes = copes.filter{ |copy| copy.currently_reading = true }
+  #   updates_by_copy = copies.map{ |copy| 
+  #     {
+  #       copy_id: copy.id,
+  #       book_id: copy.book.id,
+  #       title: copy.book.title,
+  #       page_count: copy.book.page_count,
+  #       subtitle: copy.book.subtitle,
+  #       authors: copy.book.authors,
+  #       currently_reading: copy.currently_reading,
+  #       image_url: copy.book.image_url,
+  #       updates: copy.updates.reverse
+  #     }
+  #   }
+  # end
+
   def get_updates_by_copy
-    updates = self.progresses.map{ |progress| progress.updates }.flatten
-    copies = updates.map{ |update| update.copy }.uniq
-    # currently_reading_copes = copes.filter{ |copy| copy.currently_reading = true }
-    updates_by_copy = copies.map{ |copy| 
+    currently_reading = self.copies.filter{ |copy| copy.currently_reading = true }
+    updates_by_copy = currently_reading.map{ |copy| 
       {
         copy_id: copy.id,
         book_id: copy.book.id,

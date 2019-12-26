@@ -33,12 +33,12 @@ class Progress < ApplicationRecord
         image_url: copy.book.image_url,
         authors: copy.book.authors,
         page_count: copy.book.page_count,
-        updates: copy.updates.reverse
+        updates: copy.updates.reverse.select{ |update| update.progress_id == self.id }
       }
     }
   end
-
-  def display_comments
+  
+  def display_comments(current_user)
     self.comments.map{ |comment|
       {
         id: comment.id,
@@ -47,7 +47,8 @@ class Progress < ApplicationRecord
         username: comment.user.username,
         user_avatar: comment.user.get_avatar_url,
         created_at: comment.created_at,
-        likes: comment.likes
+        likes: comment.likes,
+        current_user_likes: comment.current_user_likes?(current_user)
       }
     }
   end

@@ -4,8 +4,9 @@ class Api::CommentsController < ApplicationController
 
   def create
     comment = Comment.create(comment_params)
+    comment.update(user_id: @current_user.id)
     if comment.valid?
-      render json: { comment: CommentSerializer.new(comment).serialize_as_json, status: :ok }
+      render json: { comment: CommentSerializer.new(comment, @current_user).serialize_as_json, status: :ok }
     else
       render json: { errors: comment.errors.full_messages, status: :not_accepted }
     end

@@ -11,6 +11,11 @@ Rails.application.routes.draw do
 
     post 'shelves/add_book', to: 'shelves#add_book'
 
+    get 'progresses/:id/comments', to: 'progresses#comments'
+    post 'progresses/submit', to: 'progresses#submit'
+
+    get 'reviews/:id/comments', to: 'reviews#comments'
+
     resources :books, only: [:create, :show, :update, :destroy]
     resources :comments, only: [:create, :show, :destroy]
     resources :follows, only: [:create, :show, :destroy]

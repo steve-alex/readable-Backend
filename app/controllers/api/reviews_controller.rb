@@ -1,6 +1,7 @@
 class Api::ReviewsController < ApplicationController
-  before_action :set_review, only: [:show, :update, :destroy]
+  before_action :set_review, only: [:show, :update, :destroy, :comments]
   require "#{Rails.root}/app/serializers/review_serializer.rb"
+  require "#{Rails.root}/app/serializers/post_comments_serializer.rb"
 
   def create
     current_user = set_current_user()
@@ -39,6 +40,14 @@ class Api::ReviewsController < ApplicationController
     @review.destroy
     render json: { message: "Deleted review", status: :ok}
   end
+
+  def comments
+    if @review
+      render json: { comments: PostCommentsSerializer.new(@review, @current_user).serialize_as_json, message: "Comments recieved", status: :ok}
+    else
+      render json: { errors: "Not able to retrieve comments", status: :not_accepted}
+    end
+  end
   
   private
 
@@ -47,7 +56,7 @@ class Api::ReviewsController < ApplicationController
   end
   
   def set_review
-    @review = Review.find_by(id: params[:id])
+    @review = Review.find(params[:id])
   end
 
 end

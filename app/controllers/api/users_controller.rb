@@ -6,6 +6,7 @@ class Api::UsersController < ApplicationController
 
   def create
     user = User.create(user_params)
+    Progress.create(user_id: user.id, published: false)
     if user.valid?
       render json: {user: UserSerializer.new(user).serialize_as_json, token: issue_token({ user_id: user.id })}
     else

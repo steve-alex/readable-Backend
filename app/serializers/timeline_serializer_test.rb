@@ -8,14 +8,19 @@ class TimelineSerializerTest
 
   def serialize_as_json
     {
+      currently_reading: nil,
       posts: @user.timeline_posts.map{ |post| 
         if post.class == Progress
           {
-            progress: ProgressSerializer.new(post).serialize_as_json
+            progress: ProgressSerializer.new(post, @user).serialize_as_json
+          }
+        elsif post.class == Review 
+          {
+            review: ReviewSerializer.new(post, @user).serialize_as_json
           }
         else
           {
-            review: ReviewSerializer.new(post).serialize_as_json
+            post: nil
           }
         end
       }

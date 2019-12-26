@@ -10,7 +10,11 @@ class Comment < ApplicationRecord
     }
   }
 
-  def like_count
-    self.likes.length
+  def current_user_likes?(current_user)
+    like = self.likes.find{|like| like.user_id == current_user.id }
+    if like
+      return like
+    end
+    false
   end
 end

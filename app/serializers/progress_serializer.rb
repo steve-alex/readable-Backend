@@ -19,7 +19,7 @@ class ProgressSerializer
       },
       current_user_likes: @current_user.likes_post?(@progress),
       likes: @progress.likes,
-      comments: @progress.display_comments,
+      comments: @progress.display_comments(@current_user),
       created_at: @progress.created_at
     }
   end

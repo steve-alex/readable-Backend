@@ -26,7 +26,7 @@ class Review < ApplicationRecord
     self.comments.sort_by{ |comments| comment.like_count }
   end
 
-  def display_comments
+  def display_comments(current_user)
     self.comments.map{ |comment|
       {
         id: comment.id,
@@ -35,7 +35,8 @@ class Review < ApplicationRecord
         username: comment.user.username,
         user_avatar: comment.user.get_avatar_url,
         created_at: comment.created_at,
-        likes: comment.likes
+        likes: comment.likes,
+        current_user_likes: comment.current_user_likes?(current_user)
       }
     }
   end
