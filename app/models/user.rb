@@ -215,7 +215,7 @@ class User < ApplicationRecord
   end
 
   def likes_post?(post)  
-    like = likes.find{|like| like.likeable_id == post.id && like.likeable_type == post.class.name}
+    like = Like.all.find{|like| like.likeable_id == post.id && like.likeable_type == post.class.name}
     if like
       return like
     end

@@ -47,7 +47,6 @@ class Api::ShelvesController < ApplicationController
     end
     
     if shelf.copies.include?(copy)
-      byebug
       render json: { errors: "#{copy.book.title} is already in #{shelf.name}"}
     else
       if shelf && book && copy

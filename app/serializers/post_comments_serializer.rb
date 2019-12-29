@@ -9,6 +9,7 @@ class PostCommentsSerializer
     {
       review_id: @post.id,
       comments: @post.display_comments(@current_user)
+      # current_user_likes: @current_user.likes_post?(@progress)
     }
   end
   

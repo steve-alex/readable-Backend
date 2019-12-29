@@ -42,7 +42,6 @@ class Api::ProgressesController < ApplicationController
   end
 
   def submit
-    byebug
     @progress = @current_user.get_latest_progress
     @progress.update(published: true, content: params[:content])
     Progress.create(published: false, user_id: @current_user.id)

@@ -46,7 +46,7 @@ class Api::BooksController < ApplicationController
   end
 
   def search
-    search_results = Client.new(params[:query]).get_search_data
+    search_results = Client.new(params[:query], params[:method]).get_search_data
     render json: { results: search_results, status: :ok}
   end
 

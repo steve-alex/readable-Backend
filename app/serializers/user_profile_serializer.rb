@@ -17,7 +17,8 @@ class UserProfileSerializer
         about: @user.about,
         follower_count: @user.followers.length,
         following_count: @user.followed.length,
-        book_count: @user.copies.length
+        book_count: @user.copies.length,
+        avatar: @user.get_avatar_url
       },
       currently_readng: nil,
       shelves: @user.profile_shelf_display, 
