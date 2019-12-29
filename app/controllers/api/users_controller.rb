@@ -50,7 +50,15 @@ class Api::UsersController < ApplicationController
   def follow
     current_user = set_current_user()
     render json: { message: "Deleted user", status: :ok}
+  end
 
+  def search
+    @users = User.search_for_users(params[:searchTerm])
+    if @users
+      render json: { render: @users, message: "Users found"}
+    else
+      render json: {  message: "Search term did not match any users"}
+    end
   end
 
   def validate
