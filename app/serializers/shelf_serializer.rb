@@ -1,7 +1,8 @@
 class ShelfSerializer
 
-  def initialize(shelf)
+  def initialize(shelf, current_user)
     @shelf = shelf
+    @current_user = current_user
   end
 
   def serialize_as_json
@@ -14,7 +15,7 @@ class ShelfSerializer
         avatar: @shelf.user.avatar
       },
       copies: @shelf.copies,
-      books: @shelf.display_books
+      books: @shelf.display_books(@current_user)
     }
   end
 end

@@ -11,7 +11,8 @@ class UpdateSerializer
       copy_id: @update.copy_id,
       progress_id: @update.progress_id,
       created_at: @update.created_at,
-      user_id: @update.progress.user.id
+      user_id: @update.progress.user.id,
+      time_since_upload: @update.time_since_upload
     }
   end
 

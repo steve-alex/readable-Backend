@@ -2,14 +2,15 @@ class TimelineSerializerTest
   require "#{Rails.root}/app/serializers/review_serializer.rb"
   require "#{Rails.root}/app/serializers/progress_serializer.rb"
   
-  def initialize(current_user)
+  def initialize(current_user, userShowPage=false)
     @user = current_user
+    @userShowPage = userShowPage
   end
 
   def serialize_as_json
+    @posts = get_posts()
     {
-      currently_reading: nil,
-      posts: @user.timeline_posts.map{ |post| 
+      posts: @posts.map{ |post| 
         if post.class == Progress
           {
             progress: ProgressSerializer.new(post, @user).serialize_as_json
@@ -25,6 +26,14 @@ class TimelineSerializerTest
         end
       }
     }
+  end
+
+  def get_posts
+    if @userShowPage
+      return @user.posts
+    else
+      return @user.timeline_posts
+    end
   end
 
 end

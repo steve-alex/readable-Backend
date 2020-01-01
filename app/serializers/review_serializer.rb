@@ -31,6 +31,7 @@ class ReviewSerializer
       },
       likes: @review.likes,
       comments: @review.display_comments(@current_user),
+      time_since_upload: @review.time_since_upload,
       created_at: @review.created_at
     }
   end

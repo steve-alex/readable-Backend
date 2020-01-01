@@ -1,4 +1,5 @@
 class UserProfileSerializer
+  require "#{Rails.root}/app/serializers/timeline_serializer_test.rb"
 
   def initialize(user, current_user)
     @user = user
@@ -20,9 +21,11 @@ class UserProfileSerializer
         book_count: @user.copies.length,
         avatar: @user.get_avatar_url
       },
+      posts: TimelineSerializerTest.new(@user, true).serialize_as_json(),
       currently_readng: nil,
       shelves: @user.profile_shelf_display, 
       genres: @user.genres,
+      genre_match: @user.genre_match(@current_user),
       favourite_genres: @user.favourite_genres,
       favourite_authors: @user.favourite_authors,
       books_in_common: @user.books_in_common(@current_user),

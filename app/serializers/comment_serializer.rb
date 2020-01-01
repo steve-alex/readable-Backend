@@ -16,6 +16,7 @@ class CommentSerializer
       username: @comment.user.username,
       user_id: @comment.user.id,
       likes: @comment.likes,
+      time_since_upload: @comment.time_since_upload,
       created_at: @comment.created_at,
       updated_at: @comment.updated_at
     }

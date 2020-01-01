@@ -20,6 +20,7 @@ class BookProfileSerializer
       page_count: @book.page_count,
       google_average_rating: @book.google_average_rating,
       rating_count: @book.rating_count,
+      copy: @book.get_current_users_copy(@current_user),
       metrics: {
         most_appeared_on_shelves: @book.most_appeared_on_shelves,
         # currently_reading_count: @book.currently_reading_count,

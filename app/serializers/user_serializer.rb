@@ -15,8 +15,9 @@ class UserSerializer
       about: @user.about,
       followers: @user.followers.length,
       following: @user.followed.length,
+      book_count: @user.copies.length,
       shelves: @user.shelves,
-      currently_reading: @user.get_latest_progress.display_updates_by_book,
+      # currently_reading: @user.currently_reading,
       updates_by_copy: @user.get_updates_by_copy
     }
   end
