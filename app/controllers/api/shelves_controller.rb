@@ -14,7 +14,7 @@ class Api::ShelvesController < ApplicationController
   
   def show
     if @shelf
-      render json: { shelf: ShelfSerializer.new(@shelf).serialize_as_json, status: :ok }
+      render json: { shelf: ShelfSerializer.new(@shelf, @current_user).serialize_as_json, status: :ok }
     else
       render json: { errors: @shelf.errors.full_messages, status: :not_accepted }
     end
@@ -34,24 +34,21 @@ class Api::ShelvesController < ApplicationController
   end
 
   def add_book
-    shelf = Shelf.find(params[:shelf_id])
-
-    book = Book.find_by(google_id: params[:book][:google_id])
-    unless book
-      book = Book.create(book_params)
+    @shelf = Shelf.find(params[:shelf_id])
+    @book = Book.find_by(google_id: params[:book][:google_id])
+    unless @book
+      @book = Book.create(book_params)
     end
-
-    copy = shelf.copies.find_by(book_id: book.id)
-    unless copy
-      copy = Copy.create(book_id: book.id)
+    @copy = @current_user.copies.find{ |copy| copy.book_id == @book.id }
+    unless @copy
+      @copy = Copy.create(book_id: @book.id)
     end
-    
-    if shelf.copies.include?(copy)
-      render json: { errors: "#{copy.book.title} is already in #{shelf.name}"}
+    if @shelf.copies.include?(@copy)
+      render json: { errors: "#{@copy.book.title} is already in #{@shelf.name}"}
     else
-      if shelf && book && copy
-        shelf.copies << copy
-        render json: { shelf: shelf, message: "#{book.title} has been added to #{shelf.name}", status: :ok }
+      if @shelf && @book && @copy
+        @shelf.copies << @copy
+        render json: { shelf: ShelfSerializer.new(@shelf, @current_user).serialize_as_json, message: "#{@book.title} has been added to #{@shelf.name}", status: :ok }
       else
         render json: { errors: @shelf.errors.full_messages, status: :not_accepted }
       end

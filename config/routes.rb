@@ -3,8 +3,9 @@ Rails.application.routes.draw do
   namespace :api do
     get 'users/validate', to: 'users#validate'
     get 'users/timeline', to: 'users#timeline'
-    post 'users/login', to: 'users#login'
     get 'users/:id/profile', to: 'users#profile'
+    post 'users/login', to: 'users#login'
+    post 'users/search', to: 'users#search'
 
     post 'books/search', to: 'books#search'
     post 'books/find_or_create', to: 'books#find_or_create'

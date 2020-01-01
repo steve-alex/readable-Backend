@@ -6,6 +6,7 @@ class Api::UsersController < ApplicationController
 
   def create
     user = User.create(user_params)
+    user.create_default_avatar()
     Progress.create(user_id: user.id, published: false)
     if user.valid?
       render json: {user: UserSerializer.new(user).serialize_as_json, token: issue_token({ user_id: user.id })}
@@ -26,7 +27,6 @@ class Api::UsersController < ApplicationController
   def show
     render json: { user: UserSerializer.new(@user).serialize_as_json }
   end
-
 
   def update
     @user.safe_update(params)
@@ -53,9 +53,9 @@ class Api::UsersController < ApplicationController
   end
 
   def search
-    @users = User.search_for_users(params[:searchTerm])
+    @users = User.search_for_users(params[:search_term]).map{ |user| UserSerializer.new(user).serialize_as_json() }
     if @users
-      render json: { render: @users, message: "Users found"}
+      render json: { results: @users, message: "Users found"}
     else
       render json: {  message: "Search term did not match any users"}
     end
@@ -63,7 +63,7 @@ class Api::UsersController < ApplicationController
 
   def validate
     if logged_in
-      render json: { user: UserSerializer.new(@current_user).serialize_as_json, token: issue_token({ user_id: @current_user.id }) }
+      render json: { user: UserSerializer.new(@current_user).serialize_as_json(), token: issue_token({ user_id: @current_user.id }) }
     else
       render json: { errors: "Invalid token", status: :not_accepted}
     end

@@ -14,9 +14,8 @@ class Api::BooksController < ApplicationController
   end
 
   def show
-    current_user = set_current_user
     if @book 
-      render json: { book: BookProfileSerializer.new(@book, current_user).serialize_as_json  }
+      render json: { book: BookProfileSerializer.new(@book, @current_user).serialize_as_json  }
     else
       render json: { errors: @book.errors.full_messages, status: :not_accepted}
     end
@@ -37,9 +36,8 @@ class Api::BooksController < ApplicationController
 
   def show_page
     #This should be the route for each books
-    current_user = set_current_user
     if @book 
-      render json: { book: BookProfileSerializer.new(@book, current_user).serialize_as_json, status: :ok }
+      render json: { book: BookProfileSerializer.new(@book, @current_user).serialize_as_json, status: :ok }
     else
       render json: { errors: @book.errors.full_messages, status: :not_accepted}
     end
@@ -51,13 +49,12 @@ class Api::BooksController < ApplicationController
   end
 
   def find_or_create
-    current_user = set_current_user
     @book = Book.find_by(google_id: params[:book][:google_id])
     if @book
-      render json: { book: BookProfileSerializer.new(@book, current_user).serialize_as_json, status: :ok}
+      render json: { book: BookProfileSerializer.new(@book, @current_user).serialize_as_json, status: :ok}
     else
       @book = Book.create(book_params)
-      render json: { book: BookProfileSerializer.new(@book, current_user).serialize_as_json, status: :ok}
+      render json: { book: BookProfileSerializer.new(@book, @current_user).serialize_as_json, status: :ok}
     end
   end
 
