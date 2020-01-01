@@ -15,7 +15,8 @@ class ShelfSerializer
         avatar: @shelf.user.avatar
       },
       copies: @shelf.copies,
-      books: @shelf.display_books(@current_user)
+      books: @shelf.display_books(@current_user),
+      latest_copy: @shelf.copies[-1]
     }
   end
 end

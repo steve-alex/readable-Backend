@@ -5,8 +5,17 @@ class Api::UsersController < ApplicationController
   require "#{Rails.root}/app/serializers/user_serializer.rb"
 
   def create
-    user = User.create(user_params)
+    byebug
+    user = User.create(
+      fullname: params[:fullname],
+      username: params[:username],
+      email: params[:email],
+      password: params[:password],
+      password: params[:password_confirmation]
+    )
+    byebug
     user.create_default_avatar()
+    byebug
     Progress.create(user_id: user.id, published: false)
     if user.valid?
       render json: {user: UserSerializer.new(user).serialize_as_json, token: issue_token({ user_id: user.id })}

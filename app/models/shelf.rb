@@ -36,4 +36,8 @@ class Shelf < ApplicationRecord
     }
   end
 
+  def get_latest_copy
+    self.copies[-1]
+  end
+
 end
