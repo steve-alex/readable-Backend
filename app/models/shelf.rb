@@ -21,7 +21,7 @@ class Shelf < ApplicationRecord
     self.copies.map{ |copy| copy.book }
   end
 
-  def display_books
+  def display_books(current_user)
     self.copies.map{ |copy| 
       {
         id: copy.book.id,
@@ -30,7 +30,8 @@ class Shelf < ApplicationRecord
         author: copy.book.authors,
         image_url: copy.book.image_url,
         google_rating: copy.book.google_average_rating,
-        created_at: copy.created_at
+        created_at: copy.created_at,
+        rating: current_user.latest_rating_of_book(copy)
       }
     }
   end

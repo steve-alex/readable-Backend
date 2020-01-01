@@ -36,5 +36,9 @@ class Book < ApplicationRecord
     }
     review_distribution
   end
+
+  def get_current_users_copy(user)
+    user.copies.select{ |copy| copy.book_id == self.id }
+  end
   
 end

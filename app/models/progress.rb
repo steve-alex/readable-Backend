@@ -33,7 +33,7 @@ class Progress < ApplicationRecord
         image_url: copy.book.image_url,
         authors: copy.book.authors,
         page_count: copy.book.page_count,
-        updates: copy.updates.reverse.select{ |update| update.progress_id == self.id }
+        updates: copy.display_updates_for_progress(self.id)
       }
     }
   end
@@ -48,6 +48,7 @@ class Progress < ApplicationRecord
         user_avatar: comment.user.get_avatar_url,
         created_at: comment.created_at,
         likes: comment.likes,
+        time_since_upload: comment.time_since_upload,
         current_user_likes: comment.current_user_likes?(current_user)
       }
     }

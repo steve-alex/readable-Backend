@@ -36,6 +36,7 @@ class Review < ApplicationRecord
         user_avatar: comment.user.get_avatar_url,
         created_at: comment.created_at,
         likes: comment.likes,
+        time_since_upload: comment.time_since_upload,
         current_user_likes: comment.current_user_likes?(current_user)
       }
     }

@@ -50,6 +50,15 @@ class User < ApplicationRecord
   #   }
   # }
 
+  def self.search_for_users(search_term)
+    search_term = search_term.downcase
+    User.all.select{ |user|
+      user.username.downcase.include?(search_term) ||
+      user.fullname.downcase.include?(search_term) ||
+      user.email.downcase.include?(search_term)
+    }
+  end
+
   def following?(user)
     self.followed.include?(user)
   end
@@ -60,7 +69,7 @@ class User < ApplicationRecord
 
   def posts
     posts = Array(self.reviews).concat(Array(self.progresses.where(published: true))).flatten
-    posts.sort{ |post| post.created_at }
+    posts.sort_by{ |post| post.created_at }.reverse!
   end
 
   def timeline_posts
@@ -69,7 +78,19 @@ class User < ApplicationRecord
   end
 
   def copies
-    self.shelves.map{ |shelf| shelf.copies }.flatten
+    self.shelves.map{ |shelf| shelf.copies }.flatten.uniq
+  end
+
+  def currently_reading
+    copies = self.copies.select{ |copy| copy.currently_reading == true }
+    copies.map{ |copy| 
+      {
+        id: copy.id,
+        book_id: copy.book.id,
+        image_url: copy.book.image_url,
+        title: copy.book.title
+      }  
+    }
   end
   
   def books
@@ -88,10 +109,14 @@ class User < ApplicationRecord
     self.progresses.where(published: false)[0]
   end
 
+  def latest_rating_of_book(copy)
+    self.reviews.select{ |review| review.copy_id == copy.id }.sort_by{|review| review.created_at}[0]
+  end
+
   def profile_shelf_display
     profile_shelf_display = {}
     self.shelves.each{ |shelf|
-      copies = shelf.copies.shuffle.slice(0, 4)
+      copies = shelf.copies.shuffle
       profile_shelf_display[shelf.name] = {
         shelf_id: shelf.id,
         book_count: shelf.copies.length,
@@ -101,40 +126,26 @@ class User < ApplicationRecord
     profile_shelf_display
   end
 
-  # def get_updates_by_copy
-  #   updates = self.progresses.map{ |progress| progress.updates }.flatten
-  #   copies = updates.map{ |update| update.copy }.uniq
-  #   # currently_reading_copes = copes.filter{ |copy| copy.currently_reading = true }
-  #   updates_by_copy = copies.map{ |copy| 
-  #     {
-  #       copy_id: copy.id,
-  #       book_id: copy.book.id,
-  #       title: copy.book.title,
-  #       page_count: copy.book.page_count,
-  #       subtitle: copy.book.subtitle,
-  #       authors: copy.book.authors,
-  #       currently_reading: copy.currently_reading,
-  #       image_url: copy.book.image_url,
-  #       updates: copy.updates.reverse
-  #     }
-  #   }
-  # end
-
   def get_updates_by_copy
-    currently_reading = self.copies.filter{ |copy| copy.currently_reading = true }
-    updates_by_copy = currently_reading.map{ |copy| 
-      {
-        copy_id: copy.id,
-        book_id: copy.book.id,
-        title: copy.book.title,
-        page_count: copy.book.page_count,
-        subtitle: copy.book.subtitle,
-        authors: copy.book.authors,
-        currently_reading: copy.currently_reading,
-        image_url: copy.book.image_url,
-        updates: copy.updates.reverse
+    currently_reading = self.copies.filter{ |copy| copy.currently_reading == true }
+    if currently_reading[0]
+      updates_by_copy = currently_reading.map{ |copy| 
+        {
+          copy_id: copy.id,
+          book_id: copy.book.id,
+          title: copy.book.title,
+          page_count: copy.book.page_count,
+          subtitle: copy.book.subtitle,
+          authors: copy.book.authors,
+          currently_reading: copy.currently_reading,
+          image_url: copy.book.image_url,
+          updates: copy.display_updates
+        }
       }
-    }
+      else
+        updates_by_copy = false
+      end
+      updates_by_copy
   end
 
   def get_books_to_display(copies)
@@ -165,10 +176,42 @@ class User < ApplicationRecord
     genres_hash.sort_by{|key, value| -value}
   end
 
+  def genre_match(user)
+    if self.id === user.id
+      return false
+    end
+    current_users_favourite_genres = self.build_genres_hash
+    other_users_favourite_genres = user.build_genres_hash
+    other_users_favourite_genres.delete(nil)
+
+    similar_genres = {}
+    different_genres = {}
+
+    other_users_favourite_genres.each do |genre, count|
+      if current_users_favourite_genres[genre]
+        similar_genres[genre] = current_users_favourite_genres[genre] + other_users_favourite_genres[genre]
+      else
+        different_genres[genre] = other_users_favourite_genres[genre]
+      end
+    end
+
+    s = similar_genres.sort_by{|key, value| -value}.map{ |genre| 
+      genre[0]
+    }
+    d = different_genres.sort_by{|key, value| -value}.map{ |genre| 
+      genre[0]
+    }
+    t = s[0, 4]
+    e = d[0, 4]
+
+    return [t, e]
+  end
+
   def favourite_authors
     authors_hash = build_authors_hash()
     authors_hash.sort_by{|key, value| -value}
   end
+
 
   def build_genres_hash
     genres_hash = {}
@@ -214,8 +257,13 @@ class User < ApplicationRecord
     url_for(self.avatar)
   end
 
+  def create_default_avatar
+    self.avatar.purge
+    self.avatar.attach(io: File.open(Rails.root.join('config', 'user.png')), filename: 'user.png', content_type: 'image/png')
+  end
+
   def likes_post?(post)  
-    like = Like.all.find{|like| like.likeable_id == post.id && like.likeable_type == post.class.name}
+    like = self.likes.find{|like| like.likeable_id == post.id && like.likeable_type == post.class.name}
     if like
       return like
     end
