@@ -31,7 +31,7 @@ class Review < ApplicationRecord
       {
         id: comment.id,
         content: comment.content,
-        user_id: comment.content,
+        user_id: comment.user.id,
         username: comment.user.username,
         user_avatar: comment.user.get_avatar_url,
         created_at: comment.created_at,

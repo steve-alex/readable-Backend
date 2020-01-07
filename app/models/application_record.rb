@@ -2,8 +2,13 @@ class ApplicationRecord < ActiveRecord::Base
   self.abstract_class = true
 
   def time_since_upload
-    seconds_since_upload = Time.new - self.created_at
-    calculate_time_since_upload(seconds_since_upload)
+    if self.class.name === "Progress"
+      seconds_since_upload = Time.new - self.updated_at
+      calculate_time_since_upload(seconds_since_upload)
+    else
+      seconds_since_upload = Time.new - self.created_at
+      calculate_time_since_upload(seconds_since_upload)
+    end
   end
 
   def calculate_time_since_upload(time)

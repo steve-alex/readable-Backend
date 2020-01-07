@@ -40,5 +40,20 @@ class Book < ApplicationRecord
   def get_current_users_copy(user)
     user.copies.select{ |copy| copy.book_id == self.id }
   end
+
+  def followed_users_with_book(user)
+    followed_users_copies = user.followed.select{ |user|
+      user_has_book(user)
+    }
+  end
+
+  def user_has_book(user)
+    copies = user.copies.select{ |copy| copy.id == self.id }
+    if copies[0]
+      return true
+    else
+      return false
+    end
+  end
   
 end

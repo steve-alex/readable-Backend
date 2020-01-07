@@ -29,6 +29,7 @@ class Api::ShelvesController < ApplicationController
   end
 
   def destroy
+    @shelf.shelf_copies.map{ |sc| sc.delete }
     @shelf.destroy
     render json: { message: "Deleted shelf", status: :ok}
   end

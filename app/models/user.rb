@@ -74,7 +74,7 @@ class User < ApplicationRecord
 
   def timeline_posts
     followed_users_posts = self.followed.map{ |user| user.posts }.flatten
-    followed_users_posts.sort_by{ |post| post.created_at }.reverse!
+    followed_users_posts.sort_by{ |post| post.updated_at }.reverse!
   end
 
   def copies

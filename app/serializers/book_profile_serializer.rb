@@ -27,7 +27,8 @@ class BookProfileSerializer
         review_distribution: @book.review_distribution
       },
       current_users_reviews: current_users_reviews(),
-      followed_users_reviews: followed_users_reviews()
+      followed_users_reviews: followed_users_reviews(),
+      followers_users_with_book: @book.followed_users_with_book(@current_user)
     }
   end
 
