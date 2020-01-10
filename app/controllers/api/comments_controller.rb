@@ -6,19 +6,15 @@ class Api::CommentsController < ApplicationController
     comment = Comment.create(comment_params)
     comment.update(user_id: @current_user.id)
     if comment.valid?
-      render json: { comment: CommentSerializer.new(comment, @current_user).serialize_as_json, status: :ok }
+      render json: {comment: CommentSerializer.new(comment, @current_user).serialize_as_json, status: 201}
     else
-      render json: { errors: comment.errors.full_messages, status: :not_accepted }
+      render json: {errors: comment.errors.full_messages, status: 400}
     end
-  end
-
-  def show
-    render json: { comment: CommentSerializer.new(@comment).serialize_as_json, status: :ok }
   end
 
   def destroy
     @comment.destroy
-    render json: { message: "Deleted comment", status: :ok}
+    render json: {message: "Deleted comment", status: 204}
   end
 
   private

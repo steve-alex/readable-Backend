@@ -5,19 +5,15 @@ class Api::LikesController < ApplicationController
     like = Like.create(like_params)
     like.update(user: @current_user)
     if like.valid?
-      render json: { like: like, status: :ok }
+      render json: { like: like, status: 202 }
     else
-      render json: { errors: like.errors.full_messages, status: :not_accepted }
+      render json: { errors: like.errors.full_messages, status: 400 }
     end
-  end
-
-  def show
-    render json: @like
   end
 
   def destroy
     @like.destroy
-    render json: { message: "Deleted like", status: :ok}
+    render json: { message: "Deleted like", status: 204}
   end
 
   private

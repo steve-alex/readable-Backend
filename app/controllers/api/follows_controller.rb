@@ -2,22 +2,17 @@ class Api::FollowsController < ApplicationController
   before_action :set_follow, only: [:show, :update, :destroy]
 
   def create
-    current_user = set_current_user
-    follow = Follow.create(follower_id: current_user.id, followed_id: params[:id])
+    follow = Follow.create(follower_id: @current_user.id, followed_id: params[:id])
     if follow.valid?
-      render json: { follow: follow, status: :ok }
+      render json: {follow: follow, status: 201}
     else
-      render json: { errors: follow.errors.full_messages, status: :not_accepted }
+      render json: {errors: follow.errors.full_messages, status: 400}
     end
-  end
-
-  def show
-    render json: @follow
   end
 
   def destroy
     @follow.destroy
-    render json: { message: "Deleted follow", status: :ok}
+    render json: {message: "Deleted follow", status: 204}
   end
 
   private

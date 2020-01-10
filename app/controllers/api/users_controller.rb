@@ -5,7 +5,6 @@ class Api::UsersController < ApplicationController
   require "#{Rails.root}/app/serializers/user_serializer.rb"
 
   def create
-    byebug
     user = User.create(
       fullname: params[:fullname],
       username: params[:username],
@@ -13,77 +12,74 @@ class Api::UsersController < ApplicationController
       password: params[:password],
       password: params[:password_confirmation]
     )
-    byebug
     user.create_default_avatar()
-    byebug
     Progress.create(user_id: user.id, published: false)
     if user.valid?
-      render json: {user: UserSerializer.new(user).serialize_as_json, token: issue_token({ user_id: user.id })}
+      render json: {user: UserSerializer.new(user).serialize_as_json, token: issue_token({ user_id: user.id }), status: 201}
     else
-      render json: { errors: user.errors.full_messages, status: :not_accepted }
+      render json: {errors: user.errors.full_messages, status: 400}
     end
   end
 
   def login
     user = User.find_by(email: params[:email])
     if user && user.authenticate(params[:password])
-      render json: { user: UserSerializer.new(user).serialize_as_json, token: issue_token({ user_id: user.id }) }
+      render json: {user: UserSerializer.new(user).serialize_as_json, token: issue_token({ user_id: user.id }), status: 200}
     else
-      render json: { errors: "Email or password incorrect", status: :not_accepted }
+      render json: {errors: "Email or password incorrect", status: 400}
     end
   end
 
   def show
-    render json: { user: UserSerializer.new(@user).serialize_as_json }
+    if @user
+      render json: {user: UserSerializer.new(@user).serialize_as_json, status: 200}
+    else
+      render json: {user: @user.errors.full_messages, status: 400}
+    end
   end
 
   def update
     @user.safe_update(params)
     if @user
-      render json: { user: UserSerializer.new(@user).serialize_as_json, message: "Updated profile picture" }
+      render json: {user: UserSerializer.new(@user).serialize_as_json, status: 200}
     else
-      render json: { message: @user.errors.full_messages, status: :not_accepted}
+      render json: {message: @user.errors.full_messages, status: :400}
     end
   end
 
   def destroy
     @user.destroy
-    render json: { message: "Deleted user", status: :ok}
+    render json: {message: "Deleted user", status: 204}
   end
 
   def timeline
     current_user = set_current_user()
-    render json: { timeline: TimelineSerializerTest.new(current_user).serialize_as_json }
-  end
-
-  def follow
-    current_user = set_current_user()
-    render json: { message: "Deleted user", status: :ok}
+    render json: {timeline: TimelineSerializerTest.new(current_user).serialize_as_json, status: 200}
   end
 
   def search
     @users = User.search_for_users(params[:search_term]).map{ |user| UserSerializer.new(user).serialize_as_json() }
     if @users
-      render json: { results: @users, message: "Users found"}
+      render json: {results: @users, status: 200}
     else
-      render json: {  message: "Search term did not match any users"}
+      render json: {message: "Search term did not match any users", status: 404}
     end
   end
 
   def validate
     if logged_in
-      render json: { user: UserSerializer.new(@current_user).serialize_as_json(), token: issue_token({ user_id: @current_user.id }) }
+      render json: {user: UserSerializer.new(@current_user).serialize_as_json(), token: issue_token({ user_id: @current_user.id }), status: 200}
     else
-      render json: { errors: "Invalid token", status: :not_accepted}
+      render json: {errors: "Invalid token", status: :403}
     end
   end
 
   def profile
     current_user = set_current_user()
     if @user
-      render json: { profile: UserProfileSerializer.new(@user, current_user).serialize_as_json }
+      render json: {profile: UserProfileSerializer.new(@user, current_user).serialize_as_json, status: 200}
     else
-      render json: { errors: "User not does not exist", status: :not_accepted}
+      render json: {errors: "User not does not exist", status: :404}
     end
   end
 

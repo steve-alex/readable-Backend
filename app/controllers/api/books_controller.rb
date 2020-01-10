@@ -7,55 +7,35 @@ class Api::BooksController < ApplicationController
   def create
     book = Book.create(book_params)
     if book.valid?
-      render json: { book: BookSerializer.new(book).serialize_as_json, status: :ok }
+      render json: {book: BookSerializer.new(book).serialize_as_json, status: 201}
     else
-      render json: { errors: book.errors.full_messages, status: :not_accepted }
+      render json: {errors: book.errors.full_messages, status: 400}
     end
   end
 
   def show
     if @book 
-      render json: { book: BookProfileSerializer.new(@book, @current_user).serialize_as_json  }
+      render json: {book: BookProfileSerializer.new(@book, @current_user).serialize_as_json, status: 200}
     else
-      render json: { errors: @book.errors.full_messages, status: :not_accepted}
-    end
-  end
-
-  def update
-    if @book.update(book_params)
-      render json: { book: BookSerializer.new(@book).serialize_as_json, message: "Updated book", status: :ok }
-    else
-      render json: { message: @book.errors.full_messages, status: :not_accepted}
-    end
-  end
-
-  def destroy
-    @book.destroy
-    render json: { message: "Deleted book", status: :ok}
-  end
-
-  def show_page
-    #This should be the route for each books
-    if @book 
-      render json: { book: BookProfileSerializer.new(@book, @current_user).serialize_as_json, status: :ok }
-    else
-      render json: { errors: @book.errors.full_messages, status: :not_accepted}
+      render json: {errors: @book.errors.full_messages, status: 400}
     end
   end
 
   def search
     search_results = Client.new(params[:query], params[:method]).get_search_data
-    render json: { results: search_results, status: :ok}
+    if search_results
+      render json: {results: search_results, status: :200}
+    else
+      render json: {errors: "Unable to perform search", status: 400}
+    end
   end
 
   def find_or_create
     @book = Book.find_by(google_id: params[:book][:google_id])
-    if @book
-      render json: { book: BookProfileSerializer.new(@book, @current_user).serialize_as_json, status: :ok}
-    else
+    unless @book
       @book = Book.create(book_params)
-      render json: { book: BookProfileSerializer.new(@book, @current_user).serialize_as_json, status: :ok}
     end
+    render json: {book: BookProfileSerializer.new(@book, @current_user).serialize_as_json, status: 200}
   end
 
   private

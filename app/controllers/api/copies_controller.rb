@@ -5,29 +5,28 @@ class Api::CopiesController < ApplicationController
   def create
     @copy = Copy.create(copy_params)
     if @copy.valid?
-      render json: { copy: CopySerializer.new(@copy), status: :ok }
+      render json: {copy: CopySerializer.new(@copy), status: 201}
     else
-      render json: { errors: copy.errors.full_messages, status: :not_accepted }
+      render json: {errors: copy.errors.full_messages, status: 400}
     end
   end
 
   def show
-    render json: { review: CopySerializer.new(@copy) }
+    if @copy
+      render json: {copy: CopySerializer.new(@copy), status: 200}
+    else
+      render json: {message: @copy.errors.full_messages, status: 400}
+    end
   end
   
   def update
     if @copy.update(copy_params)
-      render json: { copy: CopySerializer.new(@copy), message: "Ucopy review", status: :ok}
+      render json: {copy: CopySerializer.new(@copy), status: 200}
     else
-      render json: { message: @copy.errors.full_messages, status: :not_accepted}
+      render json: {message: @copy.errors.full_messages, status: :400}
     end
   end
-  
-  def destroy
-    @copy.destroy
-    render json: { message: "Deleted copy", status: :ok}
-  end
-  
+
   private
 
   def copy_params

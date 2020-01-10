@@ -6,31 +6,31 @@ class Api::ProgressesController < ApplicationController
   def create
     @progress = Progress.create(progress_params)
     if progress.valid?
-      render json: { progress: ProgressSerializer.new(@progress, @current_user).serialize_as_json, status: :ok }
+      render json: { progress: ProgressSerializer.new(@progress, @current_user).serialize_as_json, status: 201 }
     else
-      render json: { errors: @progress.errors.full_messages, status: :not_accepted }
+      render json: { errors: @progress.errors.full_messages, status: 400 }
     end
   end
   
   def show
     if @progress
-      render json: { progress: ProgressSerializer.new(@progress, @current_user).serialize_as_json, status: :ok }
+      render json: { progress: ProgressSerializer.new(@progress, @current_user).serialize_as_json, status: 200 }
     else
-      render json: { errors: @progress.errors.full_messages, status: :not_accepted }
+      render json: { errors: @progress.errors.full_messages, status: 400 }
     end
   end
   
   def update
     if @progress.update(progress_params)
-      render json: { progress: ProgressSerializer.new(@progress, @current_user).serialize_as_json, message: "Updated progress", status: :ok}
+      render json: { progress: ProgressSerializer.new(@progress, @current_user).serialize_as_json, status: 200}
     else
-      render json: { errors: @progress.errors.full_messages, status: :not_accepted}
+      render json: { errors: @progress.errors.full_messages, status: 400}
     end
   end
 
   def destroy
     @progress.destroy
-    render json: { message: "Deleted progress", status: :ok}
+    render json: { message: "Deleted progress", status: 204}
   end
 
   def comments
@@ -44,11 +44,11 @@ class Api::ProgressesController < ApplicationController
   def submit
     @progress = @current_user.get_latest_progress
     @progress.update(published: true, content: params[:content])
-    Progress.create(published: false, user_id: @current_user.id)
     if @progress
-      render json: { progress: ProgressSerializer.new(@progress, @current_user).serialize_as_json, status: :ok }      
+      Progress.create(published: false, user_id: @current_user.id)
+      render json: { progress: ProgressSerializer.new(@progress, @current_user).serialize_as_json, status: 200 }      
     else
-      render json: { errors: "Unable to submit progress", status: :not_accepted }
+      render json: { errors: "Unable to submit progress", status: 400 }
     end
   end
   

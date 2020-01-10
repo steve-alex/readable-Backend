@@ -10,31 +10,15 @@ class Api::UpdatesController < ApplicationController
       page_number: params[:page_number]
     )
     if update.valid?
-      render json: { update: UpdateSerializer.new(update).serialize_as_json, status: :ok }
+      render json: {update: UpdateSerializer.new(update).serialize_as_json, status: 204}
     else
-      render json: { errors: review.errors.full_messages, status: :not_accepted }
-    end
-  end
-
-  def show
-    if update
-      render json: { update: UpdateSerializer.new(update).serialize_as_json, status: :ok }
-    else
-      render json: {errors: update.errors.full_messages, status: :not_accepted}
-    end
-  end
-  
-  def update
-    if @update.update(update_params)
-      render json: { update: UpdateSerializer.new(update).serialize_as_json, message: "Updated progress", status: :ok}
-    else
-      render json: { update: @progress, message: @update.errors.full_messages, status: :not_accepted}
+      render json: {errors: review.errors.full_messages, status: 400}
     end
   end
 
   def destroy
     @update.destroy
-    render json: { message: "Deleted update", status: :ok}
+    render json: {message: "Deleted update", status: 204}
   end
   
   private

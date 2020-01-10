@@ -25,27 +25,31 @@ class Api::ReviewsController < ApplicationController
   end
   
   def show
-    render json: { review: ReviewSerializer.new(@review, @current_user).serialize_as_json }
+    if @review
+      render json: {review: ReviewSerializer.new(@review, @current_user).serialize_as_json, status: 200}
+    else
+      render json: {message: @review.errors.full_messages, status: 400}
+    end
   end
   
   def update
     if @review.update(review_params)
-      render json: { review: ReviewSerializer.new(@review).serialize_as_json, message: "Updated review", status: :ok}
+      render json: { review: ReviewSerializer.new(@review).serialize_as_json, status: 200}
     else
-      render json: { message: @review.errors.full_messages, status: :not_accepted}
+      render json: { message: @review.errors.full_messages, status: 400}
     end
   end
   
   def destroy
     @review.destroy
-    render json: { message: "Deleted review", status: :ok}
+    render json: {message: "Deleted review", status: 204}
   end
 
   def comments
     if @review
-      render json: { comments: PostCommentsSerializer.new(@review, @current_user).serialize_as_json, message: "Comments recieved", status: :ok}
+      render json: { comments: PostCommentsSerializer.new(@review, @current_user).serialize_as_json, status: 200}
     else
-      render json: { errors: "Not able to retrieve comments", status: :not_accepted}
+      render json: { errors: "Unable to retrieve comments", status: 400}
     end
   end
   
