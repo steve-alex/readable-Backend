@@ -9,7 +9,6 @@ class Copy < ApplicationRecord
   def display_updates
     self.updates.reverse.map{ |update| 
       {
-        copy_id: self.id,
         created_at: update.created_at,
         time_since_upload: update.time_since_upload,
         id: update.id,
@@ -20,10 +19,9 @@ class Copy < ApplicationRecord
   end
 
   def display_updates_for_progress(progress_id)
-    updates = self.updates.reverse.select{ |update| update.progress_id == progress_id }
+    updates = self.updates.select{ |update| update.progress_id == progress_id }.reverse
     updates.map{ |update| 
       {
-        copy_id: self.id,
         created_at: update.created_at,
         time_since_upload: update.time_since_upload,
         id: update.id,
@@ -32,5 +30,4 @@ class Copy < ApplicationRecord
       }
     }
   end
-
 end

@@ -4,22 +4,32 @@ class Review < ApplicationRecord
   has_many :likes, :as => :likeable
   has_many :comments, :as => :commentable
 
+  validates :summary,
+    length: { maximum: 128, message: "Summary must be shorter than 128 characters."}
+
   validates :content, {
-    length: { maximum: 2000 }
+    length: { maximum: 1028, message: "Content must be shorter than 1028 characters."},
+    presence: true
   }
 
   validates :sentiment, {
     numericality: {
+      only_integer: true,
+      greater_than_or_equal_to: 0,
       less_than_or_equal_to: 100,
-      only_integer: true
-    }
+      message: "Sentiment must be an integer between 0 and 100"
+    },
+    presence: true
   }
 
   validates :rating, {
     numericality: {
+      only_integer: true,
+      greater_than_or_equal_to: 0,
       less_than_or_equal_to: 5,
-      only_integer: true
-    }
+      message: "Sentiment must be an integer between 0 and 5"
+    },
+    presence: true
   }
 
   def most_liked_comment

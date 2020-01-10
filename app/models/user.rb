@@ -1,7 +1,9 @@
 class User < ApplicationRecord
   include Rails.application.routes.url_helpers
+
   has_secure_password
   has_one_attached :avatar
+
   has_many :shelves
   has_many :likes
   has_many :comments
@@ -14,41 +16,82 @@ class User < ApplicationRecord
   has_many :follows_as_followed, foreign_key: "followed_id", class_name: :Follow, dependent: :destroy
   has_many :followers, through: :follows_as_followed, class_name: :User
 
-  validates :fullname, :username, :email, {
+  validates :fullname,{
     presence: true
   }
 
-  validates :about, {
-    length: { maximum: 380,
-      message: "About section cannot be longer than 380 characters"
-    }
-  }
-
-  # validates :fullname {
-  #       format: {
-  #     USERNAMEREX
-  #   }
-  # }
-
   validates :username, {
+    presence: true,
     uniqueness: true
-    # format: {
-    #   USERNAMEREX
-    # }
+    # format: {USERNAMEREX, message: "Username must......"
   }
 
   validates :email, {
+    presence: true,
     uniqueness: true
-    # format: {
-    #   EMAILREGEX
-    # }
+    # format: {EMAILREGEX, message: "Email must......"
   }
+
+  validates :password, {
+    presence: true
+    # format: {
+    #   PASSWORDREGEX
+    # }
+  }  
+
+  validates :about,
+    length: { maximum: 256, message: "About must be shorter than 256 characters."}
+
+  def get_avatar_url
+    url_for(self.avatar)
+  end
   
-  # validates :password {
-  #   format: {
-  #     PASSWORDREGEX
-  #   }
-  # }
+  def create_default_avatar
+    self.avatar.purge
+    self.avatar.attach(io: File.open(Rails.root.join('config', 'user.png')), filename: 'user.png', content_type: 'image/png')
+  end
+
+  def posts
+    posts = Array(self.reviews).concat(Array(self.progresses.where(published: true))).flatten
+    posts.sort_by{ |post| post.created_at }.reverse!
+  end
+
+  def copies
+    self.shelves.map{ |shelf| shelf.copies }.flatten.uniq
+  end
+
+  def books
+    self.shelves.map{ |shelf| shelf.books }.flatten.uniq
+  end
+
+  def following?(user)
+    self.followed.include?(user)
+  end
+
+  def follow_object(user)
+    self.follows_as_follower.select{|follow| follow.followed_id == user.id}.flatten
+  end  
+
+  def timeline_posts
+    followed_users_posts = self.followed.map{ |user| user.posts }.flatten
+    followed_users_posts.sort_by{ |post| post.updated_at }.reverse!
+  end
+
+  def currently_reading
+    copies = self.copies.filter{ |copy| copy.currently_reading == true }
+  end
+
+  def books_in_common(current_user)
+    if current_user.id == self.id
+      return "Current User"
+    end
+    self.books & current_user.books
+  end
+
+  def likes_post?(post)  
+    like = self.likes.find{|like| like.likeable_id == post.id && like.likeable_type == post.class.name}
+    like ? like : false
+  end
 
   def self.search_for_users(search_term)
     search_term = search_term.downcase
@@ -58,45 +101,7 @@ class User < ApplicationRecord
       user.email.downcase.include?(search_term)
     }
   end
-
-  def following?(user)
-    self.followed.include?(user)
-  end
-
-  def follow_object(user)
-    self.follows_as_follower.select{|follow| follow.followed_id == user.id}.flatten
-  end
-
-  def posts
-    posts = Array(self.reviews).concat(Array(self.progresses.where(published: true))).flatten
-    posts.sort_by{ |post| post.created_at }.reverse!
-  end
-
-  def timeline_posts
-    followed_users_posts = self.followed.map{ |user| user.posts }.flatten
-    followed_users_posts.sort_by{ |post| post.updated_at }.reverse!
-  end
-
-  def copies
-    self.shelves.map{ |shelf| shelf.copies }.flatten.uniq
-  end
-
-  def currently_reading
-    copies = self.copies.select{ |copy| copy.currently_reading == true }
-    copies.map{ |copy| 
-      {
-        id: copy.id,
-        book_id: copy.book.id,
-        image_url: copy.book.image_url,
-        title: copy.book.title
-      }  
-    }
-  end
   
-  def books
-    self.shelves.map{ |shelf| shelf.books }.flatten.uniq
-  end
-
   def shelves_containing_book(book)
     self.shelves.select{ |shelf| shelf.books.include?(book) }
   end
@@ -127,7 +132,7 @@ class User < ApplicationRecord
   end
 
   def get_updates_by_copy
-    currently_reading = self.copies.filter{ |copy| copy.currently_reading == true }
+    currently_reading = self.currently_reading
     if currently_reading[0]
       updates_by_copy = currently_reading.map{ |copy| 
         {
@@ -142,10 +147,10 @@ class User < ApplicationRecord
           updates: copy.display_updates
         }
       }
-      else
-        updates_by_copy = false
-      end
-      updates_by_copy
+    else
+      updates_by_copy = false
+    end
+    updates_by_copy
   end
 
   def get_books_to_display(copies)
@@ -162,13 +167,6 @@ class User < ApplicationRecord
   def genres
     books = self.shelves.map{ |shelf| shelf.books }.flatten
     genres = books.map{ |book| book.categories }
-  end
-
-  def books_in_common(current_user)
-    if current_user.id == self.id
-      return "Current User"
-    end
-    self.books & current_user.books
   end
 
   def favourite_genres
@@ -251,23 +249,6 @@ class User < ApplicationRecord
       cityviewable: params[:cityviewable],
       about: params[:about]
     )
-  end
-
-  def get_avatar_url
-    url_for(self.avatar)
-  end
-
-  def create_default_avatar
-    self.avatar.purge
-    self.avatar.attach(io: File.open(Rails.root.join('config', 'user.png')), filename: 'user.png', content_type: 'image/png')
-  end
-
-  def likes_post?(post)  
-    like = self.likes.find{|like| like.likeable_id == post.id && like.likeable_type == post.class.name}
-    if like
-      return like
-    end
-    false
   end
 
 end

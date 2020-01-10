@@ -5,22 +5,15 @@ class Progress < ApplicationRecord
   has_many :likes, :as => :likeable
   has_many :comments, :as => :commentable
 
-  # validates :status, {
-  #   ##Find a way of making this less that the actual book that you are reviewing
-  #   ##Could just do it on the front end, or give the number of pages for the review
-  #   ##Need to deal with user giving the status lower than the current status, consider all the cases
-  #   numericality: true
-  # }
-  # before_create do
-  #   self.
-  # end
+  validates :content,
+    length: { maximum: 256, message: "Content must be shorter than 256 characters."}
+
   def books
     self.copies.map{ |copy| copy.book }.uniq
   end
 
-
   def most_liked_comment
-    self.comments.sort_by{ |comments| comment.like_count }
+    self.comments.sort_by{ |comment| comment.likes.length }[0]
   end
 
   def display_updates_by_book

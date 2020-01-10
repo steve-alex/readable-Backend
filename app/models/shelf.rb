@@ -1,18 +1,13 @@
 class Shelf < ApplicationRecord
   belongs_to :user
-  has_many :shelf_copies
+  has_many :shelf_copies, dependent: :destroy
   has_many :copies, through: :shelf_copies
 
   validates :name, {
-    length: { maximum: 42 ,
-      message: "Shelf names cannot be longer 42 characters" }
+    length: {maximum: 42 , message: "Shelf names cannot be longer 42 characters"},
+    uniqueness: {scope: :user, message: "Shelf names must be unique"}
   }
-
-  validates :name, {
-    uniqueness: { scope: :user,
-      message: "Shelf names must be unique" }
-  }
-
+  
   def find_copy(copy_id)
     self.copies.select{ |copy| copy.id == copy_id }
   end
