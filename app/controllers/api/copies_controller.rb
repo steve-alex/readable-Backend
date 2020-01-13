@@ -1,5 +1,5 @@
 class Api::CopiesController < ApplicationController
-  before_action :set_copy, only: [:show, :update, :destroy]
+  before_action :set_copy, only: [:show, :update]
   require "#{Rails.root}/app/serializers/copy_serializer.rb"
 
   def create

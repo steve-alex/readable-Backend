@@ -1,5 +1,5 @@
 class Api::FollowsController < ApplicationController
-  before_action :set_follow, only: [:show, :update, :destroy]
+  before_action :set_follow, only: [:destroy]
 
   def create
     follow = Follow.create(follower_id: @current_user.id, followed_id: params[:id])
