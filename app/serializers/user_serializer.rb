@@ -17,23 +17,16 @@ class UserSerializer
       following: @user.followed.length,
       book_count: @user.copies.length,
       shelves: @user.shelves,
-      # currently_reading: @user.currently_reading,
       updates_by_copy: @user.get_updates_by_copy
     }
   end
 
   def get_fullname
-    if @user.fullnameviewable
-      return @user.fullname
-    end
-    nil
+    @user.fullnameviewable ? @user.fullname : nil
   end
 
   def get_city
-    if @user.cityviewable
-      return @user.city
-    end
-    nil
+    @user.cityviewable ? @user.city : nil
   end
 
 end

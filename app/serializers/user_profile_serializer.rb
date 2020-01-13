@@ -1,5 +1,5 @@
 class UserProfileSerializer
-  require "#{Rails.root}/app/serializers/timeline_serializer_test.rb"
+  require "#{Rails.root}/app/serializers/timeline_serializer.rb"
 
   def initialize(user, current_user)
     @user = user
@@ -21,9 +21,8 @@ class UserProfileSerializer
         book_count: @user.copies.length,
         avatar: @user.get_avatar_url
       },
-      posts: TimelineSerializerTest.new(@user, true).serialize_as_json(),
-      currently_readng: nil,
-      shelves: @user.profile_shelf_display, 
+      posts: TimelineSerializer.new(@user, true).serialize_as_json(),
+      shelves: @user.profile_shelf_display,
       genres: @user.genres,
       genre_match: @user.genre_match(@current_user),
       favourite_genres: @user.favourite_genres,
@@ -34,17 +33,11 @@ class UserProfileSerializer
   end
 
   def get_fullname
-    if @user.fullnameviewable
-      return @user.fullname
-    end
-    nil
+    @user.fullnameviewable ? @user.fullname : nil
   end
 
   def get_city
-    if @user.cityviewable
-      return @user.city
-    end
-    nil
+    @user.cityviewable ? @user.city : nil
   end
 
 end

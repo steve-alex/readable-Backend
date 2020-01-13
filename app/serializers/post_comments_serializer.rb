@@ -10,7 +10,7 @@ class PostCommentsSerializer
       review_id: @post.id,
       comments: @post.display_comments(@current_user),
       current_user_likes: @current_user.likes_post?(@post),
-      time_sincle_upload: @post.time_since_upload
+      time_since_upload: @post.time_since_upload
     }
   end
   
