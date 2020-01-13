@@ -1,4 +1,4 @@
-class TimelineSerializerTest
+class TimelineSerializer
   require "#{Rails.root}/app/serializers/review_serializer.rb"
   require "#{Rails.root}/app/serializers/progress_serializer.rb"
   
@@ -29,11 +29,7 @@ class TimelineSerializerTest
   end
 
   def get_posts
-    if @userShowPage
-      return @user.posts
-    else
-      return @user.timeline_posts
-    end
+    userShowPage ? @user.post : @user.timeline_posts
   end
 
 end

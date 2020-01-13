@@ -22,7 +22,6 @@ class BookProfileSerializer
       rating_count: @book.rating_count,
       copy: @book.get_current_users_copy(@current_user),
       metrics: {
-        # currently_reading_count: @book.currently_reading_count,
         review_distribution: @book.review_distribution
       },
       current_users_reviews: current_users_reviews(),
@@ -32,17 +31,11 @@ class BookProfileSerializer
   end
 
   def current_users_reviews
-    if @current_user
-      return @book.current_users_reviews(@current_user)
-    end
-    nil
+    @current_user ? @book.current_users_reviews(@current_user) : nil
   end
 
   def followed_users_reviews
-    if @current_user
-      return @book.followed_users_reviews(@current_user)
-    end
-    nil
+    @current_user ? @book.followed_users_reviews(@current_user) : nil
   end
 
   def authors
@@ -56,5 +49,5 @@ class BookProfileSerializer
   def language
     @book.language
   end
-
+  
 end

@@ -1,5 +1,5 @@
 class Api::CommentsController < ApplicationController
-  before_action :set_comment, only: [:show, :update, :destroy]
+  before_action :set_comment, only: [:destroy]
   require "#{Rails.root}/app/serializers/comment_serializer.rb"
 
   def create

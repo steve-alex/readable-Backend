@@ -19,4 +19,5 @@ class ShelfSerializer
       latest_copy: @shelf.copies[-1]
     }
   end
+  
 end

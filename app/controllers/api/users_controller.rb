@@ -43,7 +43,7 @@ class Api::UsersController < ApplicationController
     if @user
       render json: {user: UserSerializer.new(@user).serialize_as_json, status: 200}
     else
-      render json: {message: @user.errors.full_messages, status: :400}
+      render json: {message: @user.errors.full_messages, status: 400}
     end
   end
 
@@ -70,7 +70,7 @@ class Api::UsersController < ApplicationController
     if logged_in
       render json: {user: UserSerializer.new(@current_user).serialize_as_json(), token: issue_token({ user_id: @current_user.id }), status: 200}
     else
-      render json: {errors: "Invalid token", status: :403}
+      render json: {errors: "Invalid token", status: 403}
     end
   end
 
@@ -79,7 +79,7 @@ class Api::UsersController < ApplicationController
     if @user
       render json: {profile: UserProfileSerializer.new(@user, current_user).serialize_as_json, status: 200}
     else
-      render json: {errors: "User not does not exist", status: :404}
+      render json: {errors: "User not does not exist", status: 404}
     end
   end
 

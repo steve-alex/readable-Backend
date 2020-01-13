@@ -1,5 +1,5 @@
 class Api::BooksController < ApplicationController
-  before_action :set_book, only: [:show, :update, :destroy]
+  before_action :set_book, only: [:show, :find_or_create]
   require "#{Rails.root}/app/apis/client.rb"
   require "#{Rails.root}/app/serializers/book_profile_serializer.rb"
   require "#{Rails.root}/app/serializers/book_serializer.rb"
@@ -24,14 +24,13 @@ class Api::BooksController < ApplicationController
   def search
     search_results = Client.new(params[:query], params[:method]).get_search_data
     if search_results
-      render json: {results: search_results, status: :200}
+      render json: {results: search_results, status: 200}
     else
       render json: {errors: "Unable to perform search", status: 400}
     end
   end
 
   def find_or_create
-    @book = Book.find_by(google_id: params[:book][:google_id])
     unless @book
       @book = Book.create(book_params)
     end

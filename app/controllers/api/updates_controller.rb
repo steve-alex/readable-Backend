@@ -1,5 +1,5 @@
 class Api::UpdatesController < ApplicationController
-  before_action :set_update, only: [:show, :update, :destroy]
+  before_action :set_update, only: [:destroy]
 
   def create
     current_user = set_current_user

@@ -1,4 +1,5 @@
 class CopySerializer
+
   def initialize(copy)
     @copy = copy
   end
@@ -9,4 +10,5 @@ class CopySerializer
       book: @copy.book
     }
   end
+  
 end

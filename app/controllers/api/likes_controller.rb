@@ -1,5 +1,5 @@
 class Api::LikesController < ApplicationController
-  before_action :set_like, only: [:show, :update, :destroy]
+  before_action :set_like, only: [:destroy]
 
   def create
     like = Like.create(like_params)
