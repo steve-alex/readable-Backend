@@ -25,8 +25,7 @@ class UserProfileSerializer
       shelves: @user.profile_shelf_display,
       genres: @user.genres,
       genre_match: @user.genre_match(@current_user),
-      favourite_genres: @user.favourite_genres,
-      favourite_authors: @user.favourite_authors,
+      updates_by_copy: @user.get_updates_by_copy,
       books_in_common: @user.books_in_common(@current_user),
       follow_object: @current_user.follow_object(@user)
     }

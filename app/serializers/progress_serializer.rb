@@ -17,6 +17,7 @@ class ProgressSerializer
         username: @progress.user.username,
         avatar: @progress.user.get_avatar_url
       },
+      current_users_post: @progress.user_id == @current_user.id,
       current_user_likes: @current_user.likes_post?(@progress),
       likes: @progress.likes,
       comments: @progress.display_comments(@current_user),

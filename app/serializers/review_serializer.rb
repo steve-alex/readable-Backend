@@ -13,6 +13,7 @@ class ReviewSerializer
       content: @review.content,
       rating: @review.rating,
       sentiment: @review.sentiment,
+      current_users_post: @review.user_id == @current_user.id,
       current_user_likes: @current_user.likes_post?(@review),
       book: {
         id: @review.copy.book.id,

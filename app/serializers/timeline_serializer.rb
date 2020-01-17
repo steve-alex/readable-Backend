@@ -29,7 +29,7 @@ class TimelineSerializer
   end
 
   def get_posts
-    userShowPage ? @user.post : @user.timeline_posts
+    @userShowPage ? @user.posts : @user.timeline_posts
   end
 
 end

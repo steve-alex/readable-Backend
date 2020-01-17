@@ -21,6 +21,7 @@ class Shelf < ApplicationRecord
       {
         id: copy.book.id,
         google_id: copy.book.google_id,
+        copy_id: copy.id,
         title: copy.book.title,
         author: copy.book.authors,
         image_url: copy.book.image_url,
