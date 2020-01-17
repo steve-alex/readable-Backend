@@ -1,10 +1,11 @@
 class Api::UsersController < ApplicationController
   before_action :set_user, only: [:show, :update, :destroy, :timeline, :profile]
-  require "#{Rails.root}/app/serializers/timeline_serializer_test.rb"
+  require "#{Rails.root}/app/serializers/timeline_serializer.rb"
   require "#{Rails.root}/app/serializers/user_profile_serializer.rb"
   require "#{Rails.root}/app/serializers/user_serializer.rb"
 
   def create
+    byebug
     user = User.create(
       fullname: params[:fullname],
       username: params[:username],
@@ -39,7 +40,17 @@ class Api::UsersController < ApplicationController
   end
 
   def update
-    @user.safe_update(params)
+    byebug
+    @user.update(
+      fullname: params[:fullname],
+      username: params[:username],
+      email: @user.email,
+    )
+    byebug
+    @user.avatar.purge
+    byebug
+    @user.avatar.attach(params[:file])
+    byebug
     if @user
       render json: {user: UserSerializer.new(@user).serialize_as_json, status: 200}
     else
@@ -54,7 +65,7 @@ class Api::UsersController < ApplicationController
 
   def timeline
     current_user = set_current_user()
-    render json: {timeline: TimelineSerializerTest.new(current_user).serialize_as_json, status: 200}
+    render json: {timeline: TimelineSerializer.new(current_user).serialize_as_json, status: 200}
   end
 
   def search
@@ -86,7 +97,7 @@ class Api::UsersController < ApplicationController
   private
 
   def user_params
-    params.require(:user).permit(:fullname, :fullnameviewable, :username, :email, :password, :password_confirmation, :gender, :city, :cityviewable, :about, :avatar)
+    params.require(:user).permit(:fullname, :fullnameviewable, :username, :email, :password, :password_confirmation, :gender, :city, :cityviewable, :about)
   end
 
   def login_params

@@ -1,5 +1,5 @@
 class Api::BooksController < ApplicationController
-  before_action :set_book, only: [:show, :find_or_create]
+  before_action :set_book, only: [:show]
   require "#{Rails.root}/app/apis/client.rb"
   require "#{Rails.root}/app/serializers/book_profile_serializer.rb"
   require "#{Rails.root}/app/serializers/book_serializer.rb"
@@ -31,6 +31,7 @@ class Api::BooksController < ApplicationController
   end
 
   def find_or_create
+    @book = Book.find_by(google_id: params[:book][:google_id])
     unless @book
       @book = Book.create(book_params)
     end
@@ -44,6 +45,6 @@ class Api::BooksController < ApplicationController
   end
 
   def set_book
-    @book = Book.find(params[:id]) || Book.find_by(google_id: params[:google_id])
+    @book = Book.find(params[:id])
   end
 end

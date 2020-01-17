@@ -9,7 +9,7 @@ class ApplicationController < ActionController::API
     JWT.decode(token, ENV["RAILS_SECRET"])[0]
   end
 
-  def get_token 
+  def get_token
     request.headers["Authorisation"]
   end
 

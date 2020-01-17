@@ -6,7 +6,7 @@ class Api::ShelvesController < ApplicationController
   def create
     shelf = Shelf.create(shelf_params)
     if shelf.valid?
-      render json: {shelves: shelf, status: 204}
+      render json: {shelf: shelf, status: 204}
     else
       render json: {errors: shelf.errors.full_messages, status: 400}
     end

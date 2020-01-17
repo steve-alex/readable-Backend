@@ -29,6 +29,7 @@ class Api::ProgressesController < ApplicationController
   end
 
   def destroy
+    @progress.updates.map{ |update| update.destroy }
     @progress.destroy
     render json: { message: "Deleted progress", status: 204}
   end
