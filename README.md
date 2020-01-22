@@ -1,25 +1,3 @@
-# README
+Readable is a social network for book lovers. This webapp allows users to search for their favourite book, add it to different categories, track their progress and update their followers. The frontend is viewable [here](https://github.com/steve-alex/readable-react).
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
-
-Things you may want to cover:
-
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-# readable-Backend
+This project was bootstrapped with Create React App.
